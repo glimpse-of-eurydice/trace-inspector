@@ -1,0 +1,37 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+coverage/
+.vite/
+*.tsbuildinfo
+
+# Environment variables and secrets
+.env
+.env.*
+!.env.example
+
+# Local Trace Inspector data
+.trace-inspector/
+
+# Local databases
+*.db
+*.db-journal
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+
+# Runtime logs
+*.log
+logs/
+
+# Local temporary files
+tmp/
+temp/
+
+# Operating system and editor files
+.DS_Store
+.idea/
+.vscode/
