@@ -12,7 +12,8 @@
 - Real failed-command validation traces: 1
 - Event types supported: [not measured]
 - Deterministic diagnostic rules: 3
-- Test count: 13
+- Public synthetic demo traces: 1
+- Test count: 14
 
 ## Evidence notes
 
@@ -25,6 +26,12 @@
   linked to command events 31 and 32.
 - `interrupted_operation` and `incomplete_operation` are covered by synthetic
   unit tests; no live interrupted trace is claimed yet.
+- `npm run view:demo` rebuilds a synthetic failed-command trace through the
+  production replay path without requiring Codex credentials.
+- The README includes a screenshot of that public demo with its finding,
+  ordered evidence chain, selected failed event, and raw-reference metadata.
+- A fixture privacy test rejects known personal paths and credential-like
+  patterns; this is a narrow regression check, not a general secret scanner.
 - The local trace is intentionally ignored by Git; only synthetic or redacted
   fixtures may be committed.
 

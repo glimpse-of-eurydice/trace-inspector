@@ -8,6 +8,7 @@
     "demo:fixture": "tsc && node dist/demo-fixture.js",
     "record": "tsc && node dist/cli/record.js",
     "view": "tsc && node dist/cli/view.js",
+    "view:demo": "tsc && node dist/cli/view.js demo",
     "test": "tsc && node --test dist/tests/*.test.js",
     "typecheck": "tsc --noEmit",
     "build": "tsc",

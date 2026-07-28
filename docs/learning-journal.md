@@ -65,3 +65,26 @@ initial project-definition commit.
   redaction work.
 - How the viewer should expose span hierarchy without making the event evidence
   harder to inspect.
+
+## 2026-07-29 — Reproducible public demo
+
+### I learned
+
+- A demo fixture is input evidence, not a separate toy implementation. It is
+  more credible when it enters the same replay and viewer pipeline as a live
+  trace.
+- An evidence chain can reduce JSON-reading burden while preserving the path
+  back to normalized and raw records.
+- Synthetic data should explicitly declare that it contains no sensitive data;
+  live traces should retain the opposite default.
+
+### I verified
+
+- `npm run view:demo` materializes a synthetic trace with 7 events, 2 spans,
+  and 1 observed failure finding.
+- The finding links the ordered sequence `02 STARTED → 03 OUTPUT → 04 FAILED`.
+- The demo API reports `containsSensitiveData: false`.
+- A fourteenth test checks the committed fixture for known private-path and
+  credential-like patterns.
+- The README screenshot was captured from the synthetic demo after selecting
+  event 04, so it exposes no private live-trace data.

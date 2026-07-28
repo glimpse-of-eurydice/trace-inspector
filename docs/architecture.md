@@ -78,6 +78,27 @@ The first three rules intentionally make different claims:
 The incomplete rule says only that no matching completion was observed. It
 does not claim that the operation crashed, hung, or caused the final response.
 
+The viewer renders `evidenceEventIds` as an ordered evidence chain. Selecting a
+step opens that normalized event and its `rawRef`; the chain does not introduce
+an additional causal claim.
+
+## Public demo path
+
+The committed synthetic raw fixture enters the same pipeline as a live trace:
+
+```text
+fixtures/raw/demo-failed-command.jsonl
+        ↓ prepare demo trace
+.trace-inspector/traces/demo-failed-command/raw.jsonl
+        ↓ replayTrace
+events.jsonl → spans.jsonl → findings.jsonl → viewer API
+```
+
+The generated manifest marks `containsSensitiveData: false`. A privacy
+regression test rejects known personal paths and credential-like patterns in
+the committed fixture. Real local traces continue to use
+`containsSensitiveData: true` and remain ignored by Git.
+
 ## What the timeline can display
 
 When the relevant runtime events are available, the timeline can display:

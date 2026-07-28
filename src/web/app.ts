@@ -357,24 +357,46 @@ function eventCardFor(eventId: string): HTMLButtonElement | undefined {
   );
 }
 
-function jumpToEvidence(finding: DiagnosticFinding): void {
+function jumpToEvidence(
+  finding: DiagnosticFinding,
+  preferredEventId?: string,
+): void {
   const cards = finding.evidenceEventIds
     .map((eventId) => eventCardFor(eventId))
     .filter((card): card is HTMLButtonElement => card !== undefined);
-  const firstCard = cards[0];
+  const preferredCard =
+    preferredEventId === undefined
+      ? undefined
+      : cards.find((card) => card.dataset.eventId === preferredEventId);
+  const targetCard = preferredCard ?? cards[0];
 
-  if (firstCard === undefined) {
+  if (targetCard === undefined) {
     return;
   }
 
-  firstCard.click();
+  targetCard.click();
   cards.forEach((card) => card.classList.add("evidence-linked"));
-  firstCard.scrollIntoView({ behavior: "smooth", block: "center" });
-  firstCard.focus({ preventScroll: true });
+  targetCard.scrollIntoView({ behavior: "smooth", block: "center" });
+  targetCard.focus({ preventScroll: true });
+}
+
+function evidenceStepLabel(event: TraceEvent): string {
+  if (
+    event.status === "failed" ||
+    event.status === "interrupted" ||
+    event.status === "completed"
+  ) {
+    return event.status;
+  }
+
+  return event.kind.split(".").at(-1) ?? event.kind;
 }
 
 function renderFindings(payload: TracePayload): void {
   const list = requireElement("findingsList");
+  const eventById = new Map(
+    payload.events.map((event) => [event.eventId, event]),
+  );
   list.replaceChildren();
 
   if (payload.findings.length === 0) {
@@ -386,13 +408,8 @@ function renderFindings(payload: TracePayload): void {
   }
 
   for (const finding of payload.findings) {
-    const button = document.createElement("button");
-    button.type = "button";
-    button.className = `finding-card severity-${finding.severity}`;
-    button.setAttribute(
-      "aria-label",
-      `${finding.title}. Jump to supporting evidence.`,
-    );
+    const card = document.createElement("article");
+    card.className = `finding-card severity-${finding.severity}`;
 
     const heading = document.createElement("span");
     heading.className = "finding-heading";
@@ -404,9 +421,11 @@ function renderFindings(payload: TracePayload): void {
     evidence.className = `event-evidence evidence-${finding.evidenceLevel}`;
     evidence.textContent = finding.evidenceLevel.replace("_", " ");
 
-    const action = document.createElement("span");
+    const action = document.createElement("button");
+    action.type = "button";
     action.className = "finding-action";
-    action.textContent = "View evidence ↓";
+    action.textContent = "Open first evidence ↓";
+    action.addEventListener("click", () => jumpToEvidence(finding));
 
     heading.append(severity, evidence, action);
 
@@ -418,9 +437,54 @@ function renderFindings(payload: TracePayload): void {
     description.className = "finding-description";
     description.textContent = finding.description;
 
-    button.append(heading, title, description);
-    button.addEventListener("click", () => jumpToEvidence(finding));
-    list.append(button);
+    const evidenceChain = document.createElement("div");
+    evidenceChain.className = "evidence-chain";
+    evidenceChain.setAttribute(
+      "aria-label",
+      `${finding.evidenceEventIds.length} supporting events`,
+    );
+
+    const chainLabel = document.createElement("span");
+    chainLabel.className = "evidence-chain-label";
+    chainLabel.textContent = "Supporting evidence";
+    evidenceChain.append(chainLabel);
+
+    const evidenceEvents = finding.evidenceEventIds
+      .map((eventId) => eventById.get(eventId))
+      .filter((event): event is TraceEvent => event !== undefined);
+
+    for (const [index, event] of evidenceEvents.entries()) {
+      if (index > 0) {
+        const arrow = document.createElement("span");
+        arrow.className = "evidence-chain-arrow";
+        arrow.setAttribute("aria-hidden", "true");
+        arrow.textContent = "→";
+        evidenceChain.append(arrow);
+      }
+
+      const step = document.createElement("button");
+      step.type = "button";
+      step.className = `evidence-step ${eventStatusClass(event)}`;
+      step.setAttribute(
+        "aria-label",
+        `Open supporting event ${event.sequence}: ${event.title}`,
+      );
+
+      const sequence = document.createElement("strong");
+      sequence.textContent = String(event.sequence).padStart(2, "0");
+
+      const phase = document.createElement("span");
+      phase.textContent = evidenceStepLabel(event);
+
+      step.append(sequence, phase);
+      step.addEventListener("click", () =>
+        jumpToEvidence(finding, event.eventId),
+      );
+      evidenceChain.append(step);
+    }
+
+    card.append(heading, title, description, evidenceChain);
+    list.append(card);
   }
 }
 

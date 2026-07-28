@@ -3,6 +3,10 @@ import { spawn } from "node:child_process";
 import { tracePaths } from "../store/trace-files.js";
 import { startTimelineServer } from "../server/timeline-server.js";
 import { replayTrace } from "../replay/replay-trace.js";
+import {
+  DEMO_TRACE_ID,
+  prepareDemoTrace,
+} from "../demo/prepare-demo-trace.js";
 
 async function latestTraceId(): Promise<string> {
   const entries = await readdir(".trace-inspector/traces", {
@@ -23,6 +27,11 @@ async function latestTraceId(): Promise<string> {
 }
 
 async function resolveTraceId(argument: string | undefined): Promise<string> {
+  if (argument === "demo") {
+    await prepareDemoTrace();
+    return DEMO_TRACE_ID;
+  }
+
   const traceId =
     argument === undefined || argument === "latest"
       ? await latestTraceId()

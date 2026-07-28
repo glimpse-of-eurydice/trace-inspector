@@ -9,6 +9,8 @@ Local-first execution observability for AI agents.
 > also reconstructs derived operation spans and produces evidence-linked
 > deterministic findings.
 
+![Trace Inspector showing a synthetic failed command, its evidence chain, and the selected completion event](docs/assets/trace-inspector-demo.png)
+
 ## Problem
 Agent interfaces show final outputs and selected progress messages, but it is difficult to inspect one run as a structured sequence of runtime events or compare two runs at the point where their observable behavior diverges.
 
@@ -29,8 +31,10 @@ An AI evaluation researcher debugging codex runs.
   replacing their source events.
 - generate deterministic findings for failed, interrupted, and incomplete
   operations;
-- jump from a browser finding to the normalized events and raw runtime messages
-  that support it.
+- inspect a compact evidence chain for each finding and jump to any supporting
+  normalized event and raw runtime message;
+- rebuild a public synthetic demo through the same replay pipeline used by
+  locally recorded traces.
 
 ## What V1 will add
 
@@ -60,11 +64,26 @@ Timeline Viewer
 See [docs/architecture.md](docs/architecture.md) for the client and visibility
 boundary.
 
-## Planned demo
+## Reproducible demo
 
-Record a small Codex repository task, replay it as a clickable timeline, select
-a failed event, and verify the displayed finding against the corresponding raw
-runtime message.
+The committed fixture contains synthetic Codex-shaped runtime messages and no
+private local path, prompt, token, or repository content. It does not require an
+installed or authenticated Codex CLI:
+
+```bash
+npm install
+npm run view:demo
+```
+
+This command materializes `demo-failed-command` under the ignored local trace
+directory, then runs the normal normalization, span reconstruction, diagnostics,
+API, and browser-viewer path. The failure finding exposes this evidence chain:
+
+```text
+02 STARTED → 03 OUTPUT → 04 FAILED
+```
+
+Each step opens the corresponding normalized event and raw runtime message.
 
 ## Development milestones
 
@@ -98,6 +117,7 @@ npm install
 npm run typecheck
 npm test
 npm run demo:fixture
+npm run view:demo
 npm run record -- "Reply with exactly TRACE_INSPECTOR_SMOKE_OK. Do not run commands, use tools, or edit files."
 npm run view -- latest
 ```
@@ -109,13 +129,15 @@ Git because they may contain prompts, paths, command output, or code.
 
 V1 in progress. The V0 collector-to-viewer path is implemented. Replay also
 reconstructs derived spans, writes `spans.jsonl`, and writes deterministic
-diagnostics to `findings.jsonl`. Thirteen tests cover normalization, span
-reconstruction, and evidence-level boundaries. A real Codex run that executed
+diagnostics to `findings.jsonl`. Fourteen tests cover normalization, span
+reconstruction, fixture privacy, and evidence-level boundaries. A real Codex run that executed
 the harmless failing command `false` produced one observed failure finding
 linked to its start and completion events. Interrupted and incomplete
 diagnostics are currently verified with synthetic tests, not claimed as live
-runtime demonstrations. SQLite indexing, broader diagnostics, span navigation,
-browser QA, and a redacted reproducible visual demo remain.
+runtime demonstrations. The public synthetic fixture can be opened with
+`npm run view:demo`; the README screenshot shows that reproducible trace rather
+than private local data. SQLite indexing, broader diagnostics, span navigation,
+and automated browser QA remain.
 
 The implementation sequence is documented in
 [TRACE_INSPECTOR_GUIDANCE_BOOK.md](TRACE_INSPECTOR_GUIDANCE_BOOK.md).

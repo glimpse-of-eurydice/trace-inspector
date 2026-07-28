@@ -17,7 +17,7 @@ export interface TraceManifest {
   status: "completed" | "failed" | "interrupted" | "incomplete";
   collectorVersion: "0.1.0";
   eventCount: number;
-  containsSensitiveData: true;
+  containsSensitiveData: boolean;
   codexVersion: string;
 }
 
@@ -54,6 +54,14 @@ export async function appendRawRecord(
   record: RawTraceRecord,
 ): Promise<void> {
   await appendFile(file, `${JSON.stringify(record)}\n`, "utf8");
+}
+
+export async function writeRawRecords(
+  file: string,
+  records: RawTraceRecord[],
+): Promise<void> {
+  const jsonl = records.map((record) => JSON.stringify(record)).join("\n");
+  await writeFile(file, jsonl.length === 0 ? "" : `${jsonl}\n`, "utf8");
 }
 
 export async function readRawRecords(file: string): Promise<RawTraceRecord[]> {
