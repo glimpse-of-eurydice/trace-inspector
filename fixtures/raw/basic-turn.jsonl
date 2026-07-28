@@ -1,0 +1,7 @@
+{"receivedAt":"2026-07-30T19:00:00.000Z","sequence":1,"payload":{"method":"turn/started","params":{"turn":{"id":"turn_001","status":"inProgress"}}}}
+{"receivedAt":"2026-07-30T19:00:01.000Z","sequence":2,"payload":{"method":"item/started","params":{"item":{"id":"item_command_001","type":"commandExecution","command":"npm test","status":"inProgress"}}}}
+{"receivedAt":"2026-07-30T19:00:02.000Z","sequence":3,"payload":{"method":"item/commandExecution/outputDelta","params":{"itemId":"item_command_001","delta":"1 test failed"}}}
+{"receivedAt":"2026-07-30T19:00:03.000Z","sequence":4,"payload":{"method":"item/completed","params":{"item":{"id":"item_command_001","type":"commandExecution","command":"npm test","status":"failed","exitCode":1}}}}
+{"receivedAt":"2026-07-30T19:00:04.000Z","sequence":5,"payload":{"method":"turn/plan/updated","params":{"turnId":"turn_001","plan":[{"step":"Inspect the test failure","status":"inProgress"}]}}}
+{"receivedAt":"2026-07-30T19:00:05.000Z","sequence":6,"payload":{"method":"turn/completed","params":{"turn":{"id":"turn_001","status":"completed"}}}}
+{"receivedAt":"2026-07-30T19:00:06.000Z","sequence":7,"payload":{"method":"custom/example","params":{"note":"Preserve unsupported events instead of dropping them."}}}

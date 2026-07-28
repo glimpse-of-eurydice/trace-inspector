@@ -5,6 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "node --experimental-strip-types src/demo.ts",
+    "demo:fixture": "tsc && node dist/demo-fixture.js",
+    "record": "tsc && node dist/cli/record.js",
+    "test": "tsc && node --test dist/tests/normalize-codex-message.test.js",
     "typecheck": "tsc --noEmit",
     "build": "tsc",
     "start": "node dist/demo.js"

@@ -3,8 +3,9 @@
 Local-first execution observability for AI agents.
 
 
-> Status: pre-V0. The repository currently contains a design and learning plan;
-> it does not yet provide a working collector.
+> Status: V0 in progress. A working local collector can record one real Codex
+> App Server turn, preserve raw JSONL, normalize supported events, and replay a
+> terminal timeline. The clickable web timeline is the next milestone.
 
 ## Problem
 Agent interfaces show final outputs and selected progress messages, but it is difficult to inspect one run as a structured sequence of runtime events or compare two runs at the point where their observable behavior diverges.
@@ -12,8 +13,18 @@ Agent interfaces show final outputs and selected progress messages, but it is di
 ### User
 An AI evaluation researcher debugging codex runs.
 
-## What V0 will do
-Record one real Codex turn and replay it as a clickable timeline with raw evidence.
+## What works now
+
+- record one real, ephemeral Codex App Server turn;
+- preserve every received message in append-only raw JSONL;
+- write a trace manifest and replay raw evidence through a versioned schema;
+- normalize lifecycle, message, command, plan, usage, and RPC response events;
+- preserve unsupported events as `unknown`;
+- render a deterministic terminal timeline.
+
+## What V0 will add
+
+Replay the recorded turn as a clickable browser timeline with raw evidence.
 
 ## What it does not claim
 - multiple agent frameworks;
@@ -68,14 +79,25 @@ will be committed.
 
 ## Local development
 
-Not available yet. TypeScript project scaffolding and reproducible commands are
-the first V0 implementation milestone.
+Requirements: Node.js 22+, an installed and authenticated Codex CLI, and a local
+checkout that may be inspected by the recorded turn.
+
+```bash
+npm install
+npm run typecheck
+npm test
+npm run demo:fixture
+npm run record -- "Reply with exactly TRACE_INSPECTOR_SMOKE_OK. Do not run commands, use tools, or edit files."
+```
+
+Local traces are written under `.trace-inspector/traces/` and are ignored by
+Git because they may contain prompts, paths, command output, or code.
 
 ## Project status
 
-Pre-V0. The repository currently contains the project definition, evidence
-model, architecture boundary, CV evidence ledger, and learning plan. It does
-not yet provide a working collector.
+V0 in progress. The live collector, raw store, manifest, deterministic replay,
+normalizer, terminal viewer, synthetic fixture, and four normalizer tests are
+implemented. A clickable evidence viewer is not yet implemented.
 
 The implementation sequence is documented in
 [TRACE_INSPECTOR_GUIDANCE_BOOK.md](TRACE_INSPECTOR_GUIDANCE_BOOK.md).
