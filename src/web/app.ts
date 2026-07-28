@@ -1,5 +1,6 @@
 import type { TraceEvent, TraceEventKind } from "../core/trace-event.js";
 import type { RawTraceRecord } from "../adapters/codex/raw-codex-message.js";
+import type { DiagnosticFinding } from "../core/diagnostic-finding.js";
 import type { TraceSpan } from "../core/trace-span.js";
 
 interface TraceManifest {
@@ -16,6 +17,7 @@ interface TracePayload {
   manifest: TraceManifest;
   events: TraceEvent[];
   spans: TraceSpan[];
+  findings: DiagnosticFinding[];
   rawRecords: RawTraceRecord[];
 }
 
@@ -207,6 +209,7 @@ function renderSummary(payload: TracePayload): void {
   setText("traceStatus", payload.manifest.status);
   setText("eventCount", String(payload.events.length));
   setText("spanCount", String(payload.spans.length));
+  setText("findingCount", String(payload.findings.length));
   setText("duration", formatDuration(duration));
   setText("unmappedCount", String(unmappedCount));
   setText("modelReportedCount", String(modelReportedCount));
@@ -283,6 +286,7 @@ function renderTimeline(payload: TracePayload): void {
     const card = document.createElement("button");
     card.type = "button";
     card.className = "event-card";
+    card.dataset.eventId = event.eventId;
     card.setAttribute("aria-label", `Inspect event ${event.sequence}`);
 
     const cardHeader = document.createElement("span");
@@ -312,6 +316,9 @@ function renderTimeline(payload: TracePayload): void {
 
     card.append(cardHeader, title, source);
     card.addEventListener("click", () => {
+      document
+        .querySelectorAll(".event-card.evidence-linked")
+        .forEach((element) => element.classList.remove("evidence-linked"));
       document
         .querySelectorAll(".event-card.selected")
         .forEach((element) => element.classList.remove("selected"));
@@ -344,6 +351,79 @@ function renderTimeline(payload: TracePayload): void {
   }
 }
 
+function eventCardFor(eventId: string): HTMLButtonElement | undefined {
+  return [...document.querySelectorAll<HTMLButtonElement>(".event-card")].find(
+    (card) => card.dataset.eventId === eventId,
+  );
+}
+
+function jumpToEvidence(finding: DiagnosticFinding): void {
+  const cards = finding.evidenceEventIds
+    .map((eventId) => eventCardFor(eventId))
+    .filter((card): card is HTMLButtonElement => card !== undefined);
+  const firstCard = cards[0];
+
+  if (firstCard === undefined) {
+    return;
+  }
+
+  firstCard.click();
+  cards.forEach((card) => card.classList.add("evidence-linked"));
+  firstCard.scrollIntoView({ behavior: "smooth", block: "center" });
+  firstCard.focus({ preventScroll: true });
+}
+
+function renderFindings(payload: TracePayload): void {
+  const list = requireElement("findingsList");
+  list.replaceChildren();
+
+  if (payload.findings.length === 0) {
+    const empty = document.createElement("p");
+    empty.className = "findings-empty";
+    empty.textContent = "No failed, interrupted, or incomplete operations detected.";
+    list.append(empty);
+    return;
+  }
+
+  for (const finding of payload.findings) {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = `finding-card severity-${finding.severity}`;
+    button.setAttribute(
+      "aria-label",
+      `${finding.title}. Jump to supporting evidence.`,
+    );
+
+    const heading = document.createElement("span");
+    heading.className = "finding-heading";
+
+    const severity = document.createElement("strong");
+    severity.textContent = finding.severity;
+
+    const evidence = document.createElement("span");
+    evidence.className = `event-evidence evidence-${finding.evidenceLevel}`;
+    evidence.textContent = finding.evidenceLevel.replace("_", " ");
+
+    const action = document.createElement("span");
+    action.className = "finding-action";
+    action.textContent = "View evidence ↓";
+
+    heading.append(severity, evidence, action);
+
+    const title = document.createElement("span");
+    title.className = "finding-title";
+    title.textContent = finding.title;
+
+    const description = document.createElement("span");
+    description.className = "finding-description";
+    description.textContent = finding.description;
+
+    button.append(heading, title, description);
+    button.addEventListener("click", () => jumpToEvidence(finding));
+    list.append(button);
+  }
+}
+
 async function main(): Promise<void> {
   const response = await fetch("/api/trace", {
     headers: { Accept: "application/json" },
@@ -356,6 +436,7 @@ async function main(): Promise<void> {
   const payload = (await response.json()) as TracePayload;
   renderSummary(payload);
   renderTimeline(payload);
+  renderFindings(payload);
   requireElement("loadingState").hidden = true;
 
   requireElement<HTMLInputElement>("showUnmapped").addEventListener(

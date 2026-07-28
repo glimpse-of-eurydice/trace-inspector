@@ -19,4 +19,5 @@ if (prompt.length === 0) {
   console.log(`\nSaved ${result.eventCount} raw messages to ${result.traceDirectory}`);
   console.log(renderTerminalTimeline(replay.events));
   console.log(`\nReconstructed ${replay.spans.length} spans.`);
+  console.log(`Generated ${replay.findings.length} deterministic findings.`);
 }

@@ -51,6 +51,33 @@ layer. `spans.jsonl` is rebuildable and records whether each span was paired,
 missing its start, or missing its end. Parent turn relationships and all source
 event IDs remain inspectable.
 
+## Evidence-linked diagnostics
+
+Replay applies deterministic rules to reconstructed spans and writes the
+results to `findings.jsonl`. A finding contains its rule ID, severity, evidence
+level, supporting span IDs, and supporting event IDs:
+
+```text
+raw.jsonl
+    ↓ normalize
+events.jsonl
+    ↓ reconstruct
+spans.jsonl
+    ↓ deterministic rules
+findings.jsonl ── evidenceEventIds ──→ events.jsonl ── rawRef ──→ raw.jsonl
+```
+
+The first three rules intentionally make different claims:
+
+| Runtime or reconstruction state | Finding | Evidence level |
+|---|---|---|
+| Runtime reports `failed` | Failed operation | `observed` |
+| Runtime reports `interrupted` | Interrupted operation | `observed` |
+| Start has no observed completion at trace end | Incomplete operation | `inferred` |
+
+The incomplete rule says only that no matching completion was observed. It
+does not claim that the operation crashed, hung, or caused the final response.
+
 ## What the timeline can display
 
 When the relevant runtime events are available, the timeline can display:

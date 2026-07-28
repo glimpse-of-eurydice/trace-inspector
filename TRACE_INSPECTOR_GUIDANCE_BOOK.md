@@ -887,15 +887,20 @@ Avoid “framework agnostic” until a second adapter works.
 ## 2.13 V1 acceptance checklist
 
 - [ ] SQLite can be deleted and rebuilt from raw trace files.
-- [ ] Spans reconstruct normal, failed, interrupted, and incomplete operations.
-- [ ] Every diagnostic links to event or span evidence.
-- [ ] Diagnostic wording matches its evidence level.
+- [x] Spans reconstruct normal, failed, interrupted, and incomplete operations.
+- [x] Every diagnostic links to event or span evidence.
+- [x] Diagnostic wording matches its evidence level.
 - [ ] At least five deterministic diagnostic rules are tested.
 - [ ] A fake streaming server tests partial-line handling.
 - [ ] Synthetic fixtures contain no personal or repository-sensitive data.
 - [ ] UI filters reduce complexity rather than hiding raw evidence.
 - [ ] README documents supported Codex/schema versions.
 - [ ] CV evidence ledger contains only verified features and measured counts.
+
+Current checkpoint: three deterministic rules are implemented. A real Codex
+run verifies the failed-operation path. Interrupted and incomplete paths are
+covered by synthetic tests, so they should not yet be described as live runtime
+demonstrations.
 
 ## 2.14 V1 exit decision
 

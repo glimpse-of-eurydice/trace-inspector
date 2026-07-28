@@ -34,6 +34,10 @@
           <strong id="spanCount">—</strong>
         </article>
         <article>
+          <span>Findings</span>
+          <strong id="findingCount">—</strong>
+        </article>
+        <article>
           <span>Wall time</span>
           <strong id="duration">—</strong>
         </article>
@@ -63,6 +67,13 @@
               <span>Show unmapped events</span>
             </label>
           </div>
+          <section class="findings-strip" aria-labelledby="findingsTitle">
+            <div class="findings-label">
+              <p class="section-index">V1 / DIAGNOSTICS</p>
+              <h3 id="findingsTitle">Deterministic findings</h3>
+            </div>
+            <div class="findings-list" id="findingsList"></div>
+          </section>
           <p class="loading-state" id="loadingState">
             Loading evidence-preserving event stream…
           </p>

@@ -2,6 +2,7 @@ import { appendFile, mkdir, readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import type { TraceEvent } from "../core/trace-event.js";
 import type { TraceSpan } from "../core/trace-span.js";
+import type { DiagnosticFinding } from "../core/diagnostic-finding.js";
 import {
   isRawTraceRecord,
   type RawTraceRecord,
@@ -26,6 +27,7 @@ export interface TracePaths {
   raw: string;
   events: string;
   spans: string;
+  findings: string;
 }
 
 export function tracePaths(traceId: string): TracePaths {
@@ -37,6 +39,7 @@ export function tracePaths(traceId: string): TracePaths {
     raw: join(directory, "raw.jsonl"),
     events: join(directory, "events.jsonl"),
     spans: join(directory, "spans.jsonl"),
+    findings: join(directory, "findings.jsonl"),
   };
 }
 
@@ -83,6 +86,14 @@ export async function writeSpans(
   spans: TraceSpan[],
 ): Promise<void> {
   const jsonl = spans.map((span) => JSON.stringify(span)).join("\n");
+  await writeFile(file, jsonl.length === 0 ? "" : `${jsonl}\n`, "utf8");
+}
+
+export async function writeFindings(
+  file: string,
+  findings: DiagnosticFinding[],
+): Promise<void> {
+  const jsonl = findings.map((finding) => JSON.stringify(finding)).join("\n");
   await writeFile(file, jsonl.length === 0 ? "" : `${jsonl}\n`, "utf8");
 }
 

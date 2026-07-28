@@ -1,6 +1,8 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { dirname } from "node:path";
 import { normalizeCodexMessage } from "./adapters/codex/normalize-codex-message.js";
+import { reconstructSpans } from "./analysis/reconstruct-spans.js";
+import { runDiagnostics } from "./analysis/run-diagnostics.js";
 import {
   isRawTraceRecord,
   type RawTraceRecord,
@@ -9,6 +11,8 @@ import { renderTerminalTimeline } from "./viewer/terminal-timeline.js";
 
 const inputFile = "fixtures/raw/basic-turn.jsonl";
 const outputFile = ".trace-inspector/demo/events.jsonl";
+const spansFile = ".trace-inspector/demo/spans.jsonl";
+const findingsFile = ".trace-inspector/demo/findings.jsonl";
 
 async function readJsonLines(file: string): Promise<RawTraceRecord[]> {
   const text = await readFile(file, "utf8");
@@ -34,6 +38,8 @@ const events = rawRecords.flatMap((raw) =>
     rawFile: inputFile,
   }),
 );
+const spans = reconstructSpans(events);
+const findings = runDiagnostics(spans);
 
 await mkdir(dirname(outputFile), { recursive: true });
 await writeFile(
@@ -41,6 +47,23 @@ await writeFile(
   `${events.map((event) => JSON.stringify(event)).join("\n")}\n`,
   "utf8",
 );
+await writeFile(
+  spansFile,
+  `${spans.map((span) => JSON.stringify(span)).join("\n")}\n`,
+  "utf8",
+);
+await writeFile(
+  findingsFile,
+  `${findings.map((finding) => JSON.stringify(finding)).join("\n")}\n`,
+  "utf8",
+);
 
 console.log(renderTerminalTimeline(events));
 console.log(`\nNormalized JSONL written to ${outputFile}`);
+console.log(`Reconstructed ${spans.length} spans and ${findings.length} findings.`);
+
+for (const finding of findings) {
+  console.log(
+    `- ${finding.severity.toUpperCase()} · ${finding.title} · ${finding.evidenceLevel}`,
+  );
+}

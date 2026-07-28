@@ -33,3 +33,35 @@
 
 These are implementation questions for V0 rather than gaps that block the
 initial project-definition commit.
+
+## 2026-07-29 — Spans and evidence-linked findings
+
+### I learned
+
+- An event is an observed point in the runtime stream; a span is a rebuildable
+  operation reconstructed from start, output, and completion events.
+- A failed or interrupted finding is `observed` only when the runtime explicitly
+  reports that status.
+- An incomplete finding is `inferred`: it means collection ended without a
+  matching completion event, not that the operation definitely crashed or
+  became stuck.
+- A finding is useful infrastructure only when it carries stable rule metadata
+  and links back through event IDs to raw evidence.
+- A UI warning is the presentation of a finding, not the finding itself.
+
+### I verified
+
+- A synthetic fixture reconstructs a failed command span and one observed
+  failure finding.
+- Thirteen unit tests cover normalization, span reconstruction, and three
+  diagnostic rules.
+- A real Codex turn executing `/bin/zsh -c false` generated an observed failed
+  command finding linked to its start and completion events.
+- The local API returns events, spans, findings, and raw records together.
+
+### I am still uncertain about
+
+- Which additional diagnostics provide the most value before SQLite and
+  redaction work.
+- How the viewer should expose span hierarchy without making the event evidence
+  harder to inspect.

@@ -6,7 +6,8 @@ Local-first execution observability for AI agents.
 > Status: V1 in progress. A working local collector can record one real Codex
 > App Server turn, preserve raw JSONL, normalize supported events, and replay
 > them in terminal and browser timelines with linked raw evidence. Replay now
-> also reconstructs derived operation spans.
+> also reconstructs derived operation spans and produces evidence-linked
+> deterministic findings.
 
 ## Problem
 Agent interfaces show final outputs and selected progress messages, but it is difficult to inspect one run as a structured sequence of runtime events or compare two runs at the point where their observable behavior diverges.
@@ -26,11 +27,15 @@ An AI evaluation researcher debugging codex runs.
   timing, and clickable raw and normalized evidence;
 - reconstruct paired, failed, interrupted, incomplete, and orphan spans without
   replacing their source events.
+- generate deterministic findings for failed, interrupted, and incomplete
+  operations;
+- jump from a browser finding to the normalized events and raw runtime messages
+  that support it.
 
 ## What V1 will add
 
-Evidence-linked deterministic diagnostics, rebuildable SQLite indexing, span
-navigation in the viewer, redaction, and a reproducible visual demo.
+Rebuildable SQLite indexing, broader diagnostics, span navigation in the
+viewer, redaction, and a reproducible visual demo.
 
 ## What it does not claim
 - multiple agent frameworks;
@@ -103,9 +108,14 @@ Git because they may contain prompts, paths, command output, or code.
 ## Project status
 
 V1 in progress. The V0 collector-to-viewer path is implemented. Replay also
-reconstructs derived spans and writes `spans.jsonl`; nine tests cover
-normalization and span reconstruction boundaries. Diagnostics, SQLite indexing,
-span navigation, browser QA, and a redacted reproducible visual demo remain.
+reconstructs derived spans, writes `spans.jsonl`, and writes deterministic
+diagnostics to `findings.jsonl`. Thirteen tests cover normalization, span
+reconstruction, and evidence-level boundaries. A real Codex run that executed
+the harmless failing command `false` produced one observed failure finding
+linked to its start and completion events. Interrupted and incomplete
+diagnostics are currently verified with synthetic tests, not claimed as live
+runtime demonstrations. SQLite indexing, broader diagnostics, span navigation,
+browser QA, and a redacted reproducible visual demo remain.
 
 The implementation sequence is documented in
 [TRACE_INSPECTOR_GUIDANCE_BOOK.md](TRACE_INSPECTOR_GUIDANCE_BOOK.md).

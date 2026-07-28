@@ -155,7 +155,7 @@ h2 {
 
 .summary-strip {
   display: grid;
-  grid-template-columns: repeat(5, minmax(100px, 0.55fr)) minmax(250px, 1.7fr);
+  grid-template-columns: repeat(6, minmax(82px, 0.55fr)) minmax(250px, 1.7fr);
   margin: 0 28px;
   border-right: 1px solid var(--line);
   border-bottom: 1px solid var(--line);
@@ -242,6 +242,103 @@ h2 {
   height: 15px;
   margin: 0;
   accent-color: var(--accent);
+}
+
+.findings-strip {
+  display: grid;
+  grid-template-columns: minmax(155px, 0.28fr) minmax(0, 1fr);
+  gap: 18px;
+  padding: 14px 24px;
+  border-bottom: 1px solid var(--line);
+  background: rgba(9, 11, 13, 0.48);
+}
+
+.findings-label {
+  align-self: center;
+}
+
+.findings-label .section-index {
+  margin-bottom: 5px;
+}
+
+.findings-label h3 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.findings-list {
+  display: grid;
+  gap: 8px;
+}
+
+.findings-empty {
+  align-self: center;
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.finding-card {
+  display: grid;
+  gap: 5px;
+  width: 100%;
+  padding: 11px 13px;
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--accent);
+  border-radius: 9px;
+  background: var(--surface);
+  text-align: left;
+  cursor: pointer;
+  transition:
+    border-color 140ms ease,
+    background 140ms ease;
+}
+
+.finding-card:hover,
+.finding-card:focus-visible {
+  border-color: var(--accent);
+  background: var(--surface-raised);
+  outline: none;
+}
+
+.finding-card.severity-error {
+  border-left-color: var(--red);
+}
+
+.finding-heading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 8px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.finding-heading strong {
+  color: var(--accent);
+}
+
+.severity-error .finding-heading strong {
+  color: var(--red);
+}
+
+.finding-action {
+  margin-left: auto;
+  color: var(--muted);
+}
+
+.finding-title {
+  font-size: 13px;
+  font-weight: 650;
+}
+
+.finding-description {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.45;
 }
 
 .loading-state {
@@ -434,6 +531,12 @@ h2 {
   border-left-color: var(--accent);
   background: rgba(255, 204, 102, 0.055);
   box-shadow: 0 0 0 1px rgba(255, 204, 102, 0.12);
+}
+
+.event-card.evidence-linked {
+  box-shadow:
+    0 0 0 1px rgba(255, 204, 102, 0.45),
+    0 0 24px rgba(255, 204, 102, 0.1);
 }
 
 .flow-event[data-lane="lifecycle"] .event-card {
@@ -716,6 +819,10 @@ footer p {
   .summary-strip {
     grid-template-columns: repeat(2, 1fr);
     margin: 0 14px;
+  }
+
+  .findings-strip {
+    grid-template-columns: 1fr;
   }
 
   .summary-strip article:nth-child(2n) {
