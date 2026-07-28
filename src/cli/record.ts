@@ -14,8 +14,9 @@ if (prompt.length === 0) {
     prompt,
     cwd: process.cwd(),
   });
-  const events = await replayTrace(result.traceId);
+  const replay = await replayTrace(result.traceId);
 
   console.log(`\nSaved ${result.eventCount} raw messages to ${result.traceDirectory}`);
-  console.log(renderTerminalTimeline(events));
+  console.log(renderTerminalTimeline(replay.events));
+  console.log(`\nReconstructed ${replay.spans.length} spans.`);
 }

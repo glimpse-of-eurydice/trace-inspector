@@ -8,7 +8,7 @@
     "demo:fixture": "tsc && node dist/demo-fixture.js",
     "record": "tsc && node dist/cli/record.js",
     "view": "tsc && node dist/cli/view.js",
-    "test": "tsc && node --test dist/tests/normalize-codex-message.test.js",
+    "test": "tsc && node --test dist/tests/*.test.js",
     "typecheck": "tsc --noEmit",
     "build": "tsc",
     "start": "node dist/demo.js"

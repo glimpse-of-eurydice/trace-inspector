@@ -1,5 +1,6 @@
 import type { TraceEvent, TraceEventKind } from "../core/trace-event.js";
 import type { RawTraceRecord } from "../adapters/codex/raw-codex-message.js";
+import type { TraceSpan } from "../core/trace-span.js";
 
 interface TraceManifest {
   traceId: string;
@@ -14,6 +15,7 @@ interface TraceManifest {
 interface TracePayload {
   manifest: TraceManifest;
   events: TraceEvent[];
+  spans: TraceSpan[];
   rawRecords: RawTraceRecord[];
 }
 
@@ -204,6 +206,7 @@ function renderSummary(payload: TracePayload): void {
   setText("traceId", payload.manifest.traceId);
   setText("traceStatus", payload.manifest.status);
   setText("eventCount", String(payload.events.length));
+  setText("spanCount", String(payload.spans.length));
   setText("duration", formatDuration(duration));
   setText("unmappedCount", String(unmappedCount));
   setText("modelReportedCount", String(modelReportedCount));

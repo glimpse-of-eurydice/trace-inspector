@@ -1,6 +1,7 @@
 import { appendFile, mkdir, readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import type { TraceEvent } from "../core/trace-event.js";
+import type { TraceSpan } from "../core/trace-span.js";
 import {
   isRawTraceRecord,
   type RawTraceRecord,
@@ -24,6 +25,7 @@ export interface TracePaths {
   manifest: string;
   raw: string;
   events: string;
+  spans: string;
 }
 
 export function tracePaths(traceId: string): TracePaths {
@@ -34,6 +36,7 @@ export function tracePaths(traceId: string): TracePaths {
     manifest: join(directory, "manifest.json"),
     raw: join(directory, "raw.jsonl"),
     events: join(directory, "events.jsonl"),
+    spans: join(directory, "spans.jsonl"),
   };
 }
 
@@ -72,6 +75,14 @@ export async function writeNormalizedEvents(
   events: TraceEvent[],
 ): Promise<void> {
   const jsonl = events.map((event) => JSON.stringify(event)).join("\n");
+  await writeFile(file, jsonl.length === 0 ? "" : `${jsonl}\n`, "utf8");
+}
+
+export async function writeSpans(
+  file: string,
+  spans: TraceSpan[],
+): Promise<void> {
+  const jsonl = spans.map((span) => JSON.stringify(span)).join("\n");
   await writeFile(file, jsonl.length === 0 ? "" : `${jsonl}\n`, "utf8");
 }
 

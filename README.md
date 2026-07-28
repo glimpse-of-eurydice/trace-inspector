@@ -3,9 +3,10 @@
 Local-first execution observability for AI agents.
 
 
-> Status: V0 in progress. A working local collector can record one real Codex
+> Status: V1 in progress. A working local collector can record one real Codex
 > App Server turn, preserve raw JSONL, normalize supported events, and replay
-> them in terminal and browser timelines with linked raw evidence.
+> them in terminal and browser timelines with linked raw evidence. Replay now
+> also reconstructs derived operation spans.
 
 ## Problem
 Agent interfaces show final outputs and selected progress messages, but it is difficult to inspect one run as a structured sequence of runtime events or compare two runs at the point where their observable behavior diverges.
@@ -22,11 +23,14 @@ An AI evaluation researcher debugging codex runs.
 - preserve unsupported events as `unknown`;
 - render a deterministic terminal timeline;
 - open a vertical chronological browser flow with lane labels, transition
-  timing, and clickable raw and normalized evidence.
+  timing, and clickable raw and normalized evidence;
+- reconstruct paired, failed, interrupted, incomplete, and orphan spans without
+  replacing their source events.
 
-## What V0 will add
+## What V1 will add
 
-Finish the reproducible demo fixture, browser QA, and README screenshot.
+Evidence-linked deterministic diagnostics, rebuildable SQLite indexing, span
+navigation in the viewer, redaction, and a reproducible visual demo.
 
 ## What it does not claim
 - multiple agent frameworks;
@@ -98,10 +102,10 @@ Git because they may contain prompts, paths, command output, or code.
 
 ## Project status
 
-V0 in progress. The live collector, raw store, manifest, deterministic replay,
-normalizer, terminal viewer, vertical browser flow, synthetic fixture, and four
-normalizer tests are implemented. Browser QA and a redacted reproducible visual
-demo remain.
+V1 in progress. The V0 collector-to-viewer path is implemented. Replay also
+reconstructs derived spans and writes `spans.jsonl`; nine tests cover
+normalization and span reconstruction boundaries. Diagnostics, SQLite indexing,
+span navigation, browser QA, and a redacted reproducible visual demo remain.
 
 The implementation sequence is documented in
 [TRACE_INSPECTOR_GUIDANCE_BOOK.md](TRACE_INSPECTOR_GUIDANCE_BOOK.md).

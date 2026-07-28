@@ -67,15 +67,17 @@ export async function startTimelineServer(
       }
 
       if (url.pathname === "/api/trace") {
-        const [manifestText, eventsText, rawRecords] = await Promise.all([
+        const [manifestText, eventsText, spansText, rawRecords] = await Promise.all([
           readFile(paths.manifest, "utf8"),
           readFile(paths.events, "utf8"),
+          readFile(paths.spans, "utf8"),
           readRawRecords(paths.raw),
         ]);
 
         sendJson(response, 200, {
           manifest: JSON.parse(manifestText) as unknown,
           events: parseJsonLines(eventsText),
+          spans: parseJsonLines(spansText),
           rawRecords,
         });
         return;

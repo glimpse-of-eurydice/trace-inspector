@@ -2,6 +2,7 @@ import { access, readdir } from "node:fs/promises";
 import { spawn } from "node:child_process";
 import { tracePaths } from "../store/trace-files.js";
 import { startTimelineServer } from "../server/timeline-server.js";
+import { replayTrace } from "../replay/replay-trace.js";
 
 async function latestTraceId(): Promise<string> {
   const entries = await readdir(".trace-inspector/traces", {
@@ -55,6 +56,7 @@ try {
   const traceArgument = args.find((argument) => !argument.startsWith("--"));
   const shouldOpen = !args.includes("--no-open");
   const traceId = await resolveTraceId(traceArgument);
+  await replayTrace(traceId);
   const portValue = Number.parseInt(
     process.env.TRACE_INSPECTOR_PORT ?? "4318",
     10,

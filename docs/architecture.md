@@ -37,6 +37,20 @@ concurrency, and parent-child operations. At that stage, the viewer can add a
 timing mode or small duration bars without replacing the evidence-oriented
 vertical flow.
 
+## Derived spans
+
+V1 reconstructs operation spans from normalized lifecycle events:
+
+```text
+started event ── output events ── completed event
+       \___________ derived span ___________/
+```
+
+Raw JSONL remains authoritative. Normalized events remain the ordered evidence
+layer. `spans.jsonl` is rebuildable and records whether each span was paired,
+missing its start, or missing its end. Parent turn relationships and all source
+event IDs remain inspectable.
+
 ## What the timeline can display
 
 When the relevant runtime events are available, the timeline can display:
