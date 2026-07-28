@@ -24,6 +24,19 @@ Future clients could include a command-line interface, an editor extension, or
 an MCP integration. The Timeline Viewer is the first client, not the entire
 tracing system.
 
+## Timeline orientation
+
+V0 uses a vertical chronological flow because its current data is dominated by
+point events and streaming deltas. Each row retains a lane label, absolute
+timestamp, sequence node, status, evidence level, and the elapsed time from the
+previous event. A continuous spine makes the observed execution direction
+explicit.
+
+A horizontal duration view becomes more useful after V1 reconstructs spans,
+concurrency, and parent-child operations. At that stage, the viewer can add a
+timing mode or small duration bars without replacing the evidence-oriented
+vertical flow.
+
 ## What the timeline can display
 
 When the relevant runtime events are available, the timeline can display:

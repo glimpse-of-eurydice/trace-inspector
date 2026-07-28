@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Local-first execution observability for AI agents."
+    />
+    <title>Trace Inspector</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <header class="masthead">
+      <div class="brand-block">
+        <p class="eyebrow">Local execution observability</p>
+        <h1>Trace Inspector</h1>
+        <p class="trace-identity" id="traceId">Loading trace…</p>
+      </div>
+      <div class="header-status">
+        <span class="status-pill" id="traceStatus">loading</span>
+        <p id="runtimeVersion">Codex runtime</p>
+      </div>
+    </header>
+
+    <main>
+      <section class="summary-strip" aria-label="Trace summary">
+        <article>
+          <span>Events</span>
+          <strong id="eventCount">—</strong>
+        </article>
+        <article>
+          <span>Wall time</span>
+          <strong id="duration">—</strong>
+        </article>
+        <article>
+          <span>Unmapped</span>
+          <strong id="unmappedCount">—</strong>
+        </article>
+        <article>
+          <span>Model-reported</span>
+          <strong id="modelReportedCount">—</strong>
+        </article>
+        <div class="boundary-note">
+          <span>Visibility boundary</span>
+          <p>Runtime events, not hidden model computation.</p>
+        </div>
+      </section>
+
+      <section class="workspace">
+        <div class="timeline-panel">
+          <div class="panel-heading">
+            <div>
+              <p class="section-index">01 / EXECUTION</p>
+              <h2>Chronological event flow</h2>
+            </div>
+            <label class="filter-control">
+              <input id="showUnmapped" type="checkbox" checked />
+              <span>Show unmapped events</span>
+            </label>
+          </div>
+          <p class="loading-state" id="loadingState">
+            Loading evidence-preserving event stream…
+          </p>
+          <div
+            class="timeline-viewport"
+            id="timelineViewport"
+            aria-label="Execution timeline"
+          ></div>
+          <div class="timeline-legend" aria-label="Status legend">
+            <span><i class="legend-dot completed"></i>Completed</span>
+            <span><i class="legend-dot running"></i>Running</span>
+            <span><i class="legend-dot failed"></i>Failed</span>
+            <span><i class="legend-dot unmapped"></i>Unmapped</span>
+          </div>
+        </div>
+
+        <aside class="detail-panel" aria-live="polite">
+          <div class="detail-empty" id="detailEmpty">
+            <p class="section-index">02 / EVIDENCE</p>
+            <h2>Select an event</h2>
+            <p>Choose a row to inspect raw and normalized evidence.</p>
+          </div>
+
+          <div id="detailContent" hidden>
+            <div class="detail-heading">
+              <p class="section-index" id="detailSequence">EVENT</p>
+              <span class="evidence-badge" id="detailEvidence">observed</span>
+            </div>
+            <h2 id="detailTitle">Event title</h2>
+            <p class="evidence-note" id="detailEvidenceNote"></p>
+            <dl class="detail-metadata" id="detailMetadata"></dl>
+
+            <details open>
+              <summary>Raw runtime message</summary>
+              <pre id="rawJson"></pre>
+            </details>
+            <details>
+              <summary>Normalized event</summary>
+              <pre id="normalizedJson"></pre>
+            </details>
+          </div>
+        </aside>
+      </section>
+    </main>
+
+    <footer>
+      <p>Every normalized event retains a reference to append-only raw evidence.</p>
+      <p>Local trace · no telemetry · deterministic replay</p>
+    </footer>
+
+    <script type="module" src="/app.js"></script>
+  </body>
+</html>

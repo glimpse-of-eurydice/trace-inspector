@@ -9,6 +9,7 @@ import {
   writeManifest,
   type TraceManifest,
 } from "../store/trace-files.js";
+import { resolveCodexBinary } from "./resolve-codex-binary.js";
 
 export interface RecordCodexTurnOptions {
   prompt: string;
@@ -74,7 +75,7 @@ export async function recordCodexTurn(
   const paths = await createTraceDirectory(traceId);
   const startedAt = new Date().toISOString();
   const timeoutMs = options.timeoutMs ?? 120_000;
-  const codexBinary = process.env.CODEX_BIN ?? "codex";
+  const codexBinary = await resolveCodexBinary();
   const child = spawn(codexBinary, ["app-server", "--stdio"], {
     cwd: options.cwd,
     stdio: ["pipe", "pipe", "pipe"],
