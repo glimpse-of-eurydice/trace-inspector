@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Compare two agent traces and inspect their first observable divergence."
+    />
+    <title>Trace Comparison · Trace Inspector</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body class="comparison-page">
+    <header class="masthead comparison-masthead">
+      <div class="brand-block">
+        <p class="eyebrow">V2 / Controlled trace comparison</p>
+        <h1>Trace Comparison</h1>
+        <p class="trace-identity" id="comparisonId">Loading comparison…</p>
+      </div>
+      <div class="header-status">
+        <span class="status-pill status-neutral">policy-bound</span>
+        <p id="policyVersion">v2-default</p>
+      </div>
+    </header>
+
+    <main class="comparison-main">
+      <section class="comparison-summary" aria-label="Comparison summary">
+        <article>
+          <span>Aligned rows</span>
+          <strong id="alignedCount">—</strong>
+        </article>
+        <article>
+          <span>Same</span>
+          <strong id="sameCount">—</strong>
+        </article>
+        <article>
+          <span>Changed</span>
+          <strong id="changedCount">—</strong>
+        </article>
+        <article>
+          <span>One-sided</span>
+          <strong id="oneSidedCount">—</strong>
+        </article>
+        <article class="alignment-status-summary">
+          <span>Alignment</span>
+          <strong id="alignmentStatus">—</strong>
+        </article>
+        <div class="comparison-boundary">
+          <span>Claim boundary</span>
+          <p id="comparisonClaimBoundary">
+            First observable difference under a policy—not causal origin.
+          </p>
+        </div>
+      </section>
+
+      <section class="intervention-panel">
+        <div>
+          <p class="section-index">00 / CONSTRUCTED PAIR</p>
+          <h2 id="taskStatement">Loading task…</h2>
+        </div>
+        <dl class="intervention-grid">
+          <div>
+            <dt>Changed variable</dt>
+            <dd id="changedVariable">—</dd>
+          </div>
+          <div>
+            <dt>Baseline</dt>
+            <dd id="leftCondition">—</dd>
+          </div>
+          <div>
+            <dt>Variant</dt>
+            <dd id="rightCondition">—</dd>
+          </div>
+        </dl>
+        <p class="intervention-boundary" id="interventionBoundary"></p>
+      </section>
+
+      <section class="divergence-callout" id="divergenceCallout">
+        <div>
+          <p class="section-index">FIRST OBSERVABLE DIVERGENCE</p>
+          <h2 id="divergenceTitle">Computing deterministic alignment…</h2>
+          <p id="divergenceReason"></p>
+        </div>
+        <button id="jumpToDivergence" type="button">Jump to aligned evidence ↓</button>
+      </section>
+
+      <details class="policy-panel">
+        <summary>Comparison policy and matching rules</summary>
+        <div class="policy-grid">
+          <div>
+            <span>Compared</span>
+            <p id="comparedFields">—</p>
+          </div>
+          <div>
+            <span>Ignored</span>
+            <p id="ignoredFields">—</p>
+          </div>
+          <div>
+            <span>Algorithm</span>
+            <p id="algorithmName">—</p>
+          </div>
+          <div>
+            <span>Optimal path assessment</span>
+            <p id="optimalPathAssessment">—</p>
+          </div>
+        </div>
+      </details>
+
+      <section class="alignment-panel">
+        <div class="alignment-heading">
+          <div>
+            <p class="section-index">01 / BASELINE</p>
+            <h2 id="leftTraceId">Left trace</h2>
+          </div>
+          <p id="alignmentMode">Deterministic alignment</p>
+          <div>
+            <p class="section-index">02 / VARIANT</p>
+            <h2 id="rightTraceId">Right trace</h2>
+          </div>
+        </div>
+        <p class="loading-state" id="comparisonLoading">
+          Aligning normalized runtime events…
+        </p>
+        <div class="alignment-list" id="alignmentList"></div>
+      </section>
+
+      <section class="pair-evidence-panel" id="pairEvidence">
+        <div class="pair-evidence-heading">
+          <div>
+            <p class="section-index">03 / RAW EVIDENCE</p>
+            <h2 id="pairEvidenceTitle">Select an aligned row</h2>
+          </div>
+          <span class="evidence-badge evidence-inferred">policy-derived</span>
+        </div>
+        <p class="evidence-note" id="pairEvidenceReason">
+          Inspect both normalized events and their raw runtime messages.
+        </p>
+        <div class="pair-evidence-grid">
+          <article id="leftEvidence"></article>
+          <article id="rightEvidence"></article>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <p>Underlying events remain observed; alignment and divergence are inferred.</p>
+      <p>Local comparison · versioned policy · reproducible fixtures</p>
+    </footer>
+
+    <script type="module" src="/compare.js"></script>
+  </body>
+</html>

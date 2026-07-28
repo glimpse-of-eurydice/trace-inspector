@@ -9,6 +9,8 @@
     "record": "tsc && node dist/cli/record.js",
     "view": "tsc && node dist/cli/view.js",
     "view:demo": "tsc && node dist/cli/view.js demo",
+    "compare:demo": "tsc && node dist/cli/compare-demo.js",
+    "eval:golden": "tsc && node dist/cli/evaluate-golden-set.js",
     "test": "tsc && node --test dist/tests/*.test.js",
     "typecheck": "tsc --noEmit",
     "build": "tsc",

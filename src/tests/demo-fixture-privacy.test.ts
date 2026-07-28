@@ -2,12 +2,24 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
 import {
+  DEMO_BASELINE_FIXTURE_FILE,
+  DEMO_INTERVENTION_FILE,
+} from "../demo/prepare-comparison-demo.js";
+import {
   DEMO_FIXTURE_FILE,
   DEMO_TRACE_ID,
 } from "../demo/prepare-demo-trace.js";
+import { COMPARISON_GOLDEN_SET_FILE } from "../evaluation/evaluate-golden-set.js";
 
-test("the committed demo fixture contains no known private local paths", async () => {
-  const fixture = await readFile(DEMO_FIXTURE_FILE, "utf8");
+test("the committed demo fixtures contain no known private local paths", async () => {
+  const fixtures = await Promise.all(
+    [
+      DEMO_FIXTURE_FILE,
+      DEMO_BASELINE_FIXTURE_FILE,
+      DEMO_INTERVENTION_FILE,
+      COMPARISON_GOLDEN_SET_FILE,
+    ].map((file) => readFile(file, "utf8")),
+  );
   const forbiddenPatterns = [
     /\/Users\//i,
     /qiujingwen/i,
@@ -17,8 +29,10 @@ test("the committed demo fixture contains no known private local paths", async (
     /sk-[A-Za-z0-9_-]{12,}/,
   ];
 
-  for (const pattern of forbiddenPatterns) {
-    assert.doesNotMatch(fixture, pattern);
+  for (const fixture of fixtures) {
+    for (const pattern of forbiddenPatterns) {
+      assert.doesNotMatch(fixture, pattern);
+    }
   }
 
   assert.match(DEMO_TRACE_ID, /^demo-[a-z-]+$/);

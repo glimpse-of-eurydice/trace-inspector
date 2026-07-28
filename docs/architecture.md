@@ -99,6 +99,41 @@ regression test rejects known personal paths and credential-like patterns in
 the committed fixture. Real local traces continue to use
 `containsSensitiveData: true` and remain ignored by Git.
 
+## V2 comparison path
+
+V2 compares normalized event sequences without modifying either source trace:
+
+```text
+baseline raw → replay → baseline events ──┐
+                                          ├─ versioned comparison policy
+variant raw  → replay → variant events  ──┘
+                                                   ↓
+                                 aligned rows + first divergence
+                                                   ↓
+                              diff.json + side-by-side evidence viewer
+```
+
+The `v2-default` policy uses deterministic dynamic-programming sequence
+alignment. It compares event kind, normalized command, status, output, plan,
+and unsupported source-event type. It ignores event IDs, entity IDs, absolute
+timestamps, and raw file/sequence references. Optional left and right workspace
+roots normalize to the same `<WORKSPACE>` placeholder.
+
+An aligned pair is classified as:
+
+- `same`: all configured material fields match;
+- `changed`: the events share a kind but a configured field differs;
+- `inserted`: only the right trace contains the aligned event;
+- `deleted`: only the left trace contains the aligned event.
+
+The first observable divergence is the earliest non-`same` aligned row under
+that policy, but only when the minimum-cost alignment is unique. The dynamic
+program counts optimal paths up to a limit of two. If more than one optimum
+exists, the diff marks the alignment `ambiguous`, retains one deterministic
+preview for inspection, and withholds first divergence. Because alignment and
+policy selection are analytical operations, both the status and any divergence
+record are `inferred` even when supporting runtime events are `observed`.
+
 ## What the timeline can display
 
 When the relevant runtime events are available, the timeline can display:
@@ -124,5 +159,6 @@ cannot by itself show:
 - the private or complete chain of thought;
 - the true causal contribution of a context or memory item.
 
-The project therefore describes V0 and V1 as **execution observability**, not
-mechanistic interpretability.
+The project therefore describes V0 and V1 as **execution observability** and V2
+as **controlled trace comparison**, not mechanistic interpretability or causal
+attribution.

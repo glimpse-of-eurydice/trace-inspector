@@ -1,0 +1,15 @@
+{
+  "interventionId": "synthetic-test-outcome",
+  "baseTaskId": "run-project-tests",
+  "taskStatement": "Run the project test suite and inspect the result.",
+  "changedVariable": "test_suite.outcome",
+  "leftCondition": "seven tests pass",
+  "rightCondition": "one test fails",
+  "heldConstant": [
+    "command: npm test",
+    "event normalization schema 0.1",
+    "comparison policy v2-default"
+  ],
+  "knownUncontrolledFactors": [],
+  "evidenceBoundary": "This is a constructed synthetic pair. It demonstrates comparison behavior, not a causal estimate about a model."
+}

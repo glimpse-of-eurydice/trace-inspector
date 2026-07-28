@@ -3,11 +3,13 @@
 Local-first execution observability for AI agents.
 
 
-> Status: V1 in progress. A working local collector can record one real Codex
+> Status: V2 core complete. A working local collector can record one real Codex
 > App Server turn, preserve raw JSONL, normalize supported events, and replay
 > them in terminal and browser timelines with linked raw evidence. Replay now
 > also reconstructs derived operation spans and produces evidence-linked
-> deterministic findings.
+> deterministic findings. A versioned comparison policy aligns controlled trace
+> pairs, locates a first observable divergence only for a unique optimum, and
+> abstains when multiple minimum-cost alignments exist.
 
 ![Trace Inspector showing a synthetic failed command, its evidence chain, and the selected completion event](docs/assets/trace-inspector-demo.png)
 
@@ -28,18 +30,29 @@ An AI evaluation researcher debugging codex runs.
 - open a vertical chronological browser flow with lane labels, transition
   timing, and clickable raw and normalized evidence;
 - reconstruct paired, failed, interrupted, incomplete, and orphan spans without
-  replacing their source events.
+  replacing their source events;
 - generate deterministic findings for failed, interrupted, and incomplete
   operations;
 - inspect a compact evidence chain for each finding and jump to any supporting
   normalized event and raw runtime message;
 - rebuild a public synthetic demo through the same replay pipeline used by
-  locally recorded traces.
+  locally recorded traces;
+- align two traces with a documented dynamic-programming policy that ignores
+  random IDs and absolute timestamps;
+- classify aligned rows as `same`, `changed`, `inserted`, or `deleted`;
+- count minimum-cost alignment paths and surface ambiguous comparisons;
+- retain one deterministic preview while withholding first divergence when the
+  optimum is not unique;
+- evaluate the policy against an eight-pair synthetic golden set;
+- locate the first observable divergence and inspect normalized and raw
+  evidence from both sides in a side-by-side viewer.
 
-## What V1 will add
+## What remains
 
-Rebuildable SQLite indexing, broader diagnostics, span navigation in the
-viewer, redaction, and a reproducible visual demo.
+V1 hardening still includes rebuildable SQLite indexing, broader diagnostics,
+span navigation, redaction, and automated browser tests. Optional comparison
+hardening includes policy controls, streamed-output aggregation, and evaluation
+on larger real-trace sets.
 
 ## What it does not claim
 - multiple agent frameworks;
@@ -57,12 +70,15 @@ Codex App Server
 Collector and Codex Adapter
         ↓ normalized append-only events
 Trace Core and Local Store
-        ↓
-Timeline Viewer
+        ↓                    ↘
+Timeline Viewer          Trace Comparator
+                              ↓
+                    Side-by-side Diff Viewer
 ```
 
 See [docs/architecture.md](docs/architecture.md) for the client and visibility
-boundary.
+boundary, and [docs/comparison-policy.md](docs/comparison-policy.md) for the
+exact V2 matching fields, costs, ambiguity rule, and golden-set coverage.
 
 ## Reproducible demo
 
@@ -84,6 +100,53 @@ API, and browser-viewer path. The failure finding exposes this evidence chain:
 ```
 
 Each step opens the corresponding normalized event and raw runtime message.
+
+The V2 comparison demo constructs a successful baseline and failed variant:
+
+```bash
+npm run compare:demo
+```
+
+Its versioned policy ignores event IDs, entity IDs, absolute timestamps, and
+raw-file references. It compares event kind, command, status, command output,
+plan content, and unsupported source-event type. For the committed pair it
+reports:
+
+```text
+baseline event 03: 7 tests passed
+variant  event 03: 1 test failed
+                    ↑ first observable divergence under v2-default
+```
+
+The underlying outputs are observed runtime evidence. Their alignment and the
+choice of “first” are `inferred` under the selected policy; neither is presented
+as the cause of later behavior.
+
+The policy golden set can be evaluated without credentials:
+
+```bash
+npm run eval:golden
+```
+
+Eight predeclared pairs cover exact matches, material changes, insertions,
+deletions, harmless metadata variation, and two ambiguity cases. Ambiguous
+comparisons expose a deterministic preview but withhold first divergence.
+
+### V2 comparison walkthrough
+
+![Trace Comparison overview showing the constructed intervention, unique alignment status, and first observable divergence](docs/assets/trace-comparison-overview.png)
+
+The overview states the changed condition and claim boundary before presenting
+the inferred divergence.
+
+<details>
+<summary>Inspect the aligned trajectory and linked raw evidence</summary>
+
+![Side-by-side alignment of the successful and failed synthetic command traces](docs/assets/trace-comparison-alignment.png)
+
+![Raw and normalized evidence for the selected command-output divergence](docs/assets/trace-comparison-evidence.png)
+
+</details>
 
 ## Development milestones
 
@@ -118,6 +181,8 @@ npm run typecheck
 npm test
 npm run demo:fixture
 npm run view:demo
+npm run compare:demo
+npm run eval:golden
 npm run record -- "Reply with exactly TRACE_INSPECTOR_SMOKE_OK. Do not run commands, use tools, or edit files."
 npm run view -- latest
 ```
@@ -127,17 +192,25 @@ Git because they may contain prompts, paths, command output, or code.
 
 ## Project status
 
-V1 in progress. The V0 collector-to-viewer path is implemented. Replay also
-reconstructs derived spans, writes `spans.jsonl`, and writes deterministic
-diagnostics to `findings.jsonl`. Fourteen tests cover normalization, span
-reconstruction, fixture privacy, and evidence-level boundaries. A real Codex run that executed
-the harmless failing command `false` produced one observed failure finding
-linked to its start and completion events. Interrupted and incomplete
-diagnostics are currently verified with synthetic tests, not claimed as live
-runtime demonstrations. The public synthetic fixture can be opened with
-`npm run view:demo`; the README screenshot shows that reproducible trace rather
-than private local data. SQLite indexing, broader diagnostics, span navigation,
-and automated browser QA remain.
+The V0 collector-to-viewer path and the evidence-linked V1 core are implemented.
+Replay reconstructs derived spans, writes `spans.jsonl`, and writes deterministic
+diagnostics to `findings.jsonl`. Twenty tests cover normalization, span
+reconstruction, comparison, fixture privacy, and evidence-level boundaries. A
+real Codex run that executed the harmless failing command `false` produced one
+observed failure finding linked to its start and completion events. Interrupted
+and incomplete diagnostics are currently verified with synthetic tests, not
+claimed as live runtime demonstrations. The public synthetic fixture can be
+opened with `npm run view:demo`; the README screenshot shows that reproducible
+trace rather than private local data.
+
+The V2 core writes a versioned `diff.json`, preserves an intervention manifest,
+aligns a committed success/failure pair into seven rows, and identifies the
+constructed output change at alignment index 2. Harmless event-ID, entity-ID,
+timestamp, raw-reference, and configured workspace-root changes are covered by
+tests. The `v2-default` `0.2.0` policy counts optimal alignment paths, marks
+ties as ambiguous, and withholds first divergence rather than elevating a
+deterministic tie-break. All eight committed golden pairs pass. This is a
+bounded local comparison system, not a semantic or causal trace judge.
 
 The implementation sequence is documented in
 [TRACE_INSPECTOR_GUIDANCE_BOOK.md](TRACE_INSPECTOR_GUIDANCE_BOOK.md).

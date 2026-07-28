@@ -1150,20 +1150,30 @@ The README should include:
 
 ## 3.11 V2 acceptance checklist
 
-- [ ] Trace comparison uses a documented, versioned deterministic algorithm.
-- [ ] Matching rules are inspectable in the UI.
-- [ ] First observable divergence has a precise definition.
-- [ ] The diff links back to raw evidence on both sides.
-- [ ] Harmless ID and workspace-path changes do not create false divergence.
-- [ ] Ambiguous alignments are surfaced rather than hidden.
-- [ ] A synthetic golden set tests known divergence points.
-- [ ] One controlled intervention has a manifest of changed and held variables.
-- [ ] Output comparison begins with deterministic signals.
-- [ ] README avoids upgrading paired observation into causal attribution.
+- [x] Trace comparison uses a documented, versioned deterministic algorithm.
+- [x] Matching rules are inspectable in the UI.
+- [x] First observable divergence has a precise definition.
+- [x] The diff links back to raw evidence on both sides.
+- [x] Harmless ID and workspace-path changes do not create false divergence.
+- [x] Ambiguous alignments are surfaced rather than hidden.
+- [x] A synthetic golden set tests known divergence points.
+- [x] One controlled intervention has a manifest of changed and held variables.
+- [x] Output comparison begins with deterministic signals.
+- [x] README avoids upgrading paired observation into causal attribution.
+
+Current checkpoint: the V2 core contains one constructed success/failure demo,
+an eight-pair synthetic golden set, a persisted versioned diff, and a
+side-by-side evidence viewer. Policy `v2-default` `0.2.0` counts minimum-cost
+paths; ambiguous comparisons retain one labeled preview but withhold first
+divergence.
 
 ## 3.12 V2 exit decision
 
 V2 is complete when another person can inspect a pair, understand why the algorithm chose the divergence point, reproduce the result from committed synthetic traces, and disagree with the matching policy without reverse-engineering your code.
+
+**Exit status:** complete for the bounded V2 definition. Policy controls,
+streamed-output aggregation, and larger real-trace evaluation are later
+hardening, not blockers for the post-V2 case study.
 
 ---
 

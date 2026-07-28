@@ -1,0 +1,227 @@
+{
+  "schemaVersion": "0.1",
+  "description": "Synthetic normalized event specifications with predeclared alignment outcomes.",
+  "cases": [
+    {
+      "caseId": "exact-match",
+      "description": "Identical material events produce one resolved alignment and no divergence.",
+      "leftEvents": [
+        { "kind": "turn.started", "status": "running" },
+        { "kind": "command.started", "status": "running", "command": "npm test" },
+        { "kind": "command.output", "output": "7 tests passed" },
+        { "kind": "command.completed", "status": "completed", "command": "npm test" },
+        { "kind": "turn.completed", "status": "completed" }
+      ],
+      "rightEvents": [
+        { "kind": "turn.started", "status": "running" },
+        { "kind": "command.started", "status": "running", "command": "npm test" },
+        { "kind": "command.output", "output": "7 tests passed" },
+        { "kind": "command.completed", "status": "completed", "command": "npm test" },
+        { "kind": "turn.completed", "status": "completed" }
+      ],
+      "expected": {
+        "alignmentStatus": "resolved",
+        "firstDivergence": null,
+        "summary": { "same": 5, "changed": 0, "inserted": 0, "deleted": 0 }
+      }
+    },
+    {
+      "caseId": "output-change",
+      "description": "A deterministic command-output change is the first divergence.",
+      "leftEvents": [
+        { "kind": "turn.started", "status": "running" },
+        { "kind": "command.started", "status": "running", "command": "npm test" },
+        { "kind": "command.output", "output": "7 tests passed" },
+        { "kind": "command.completed", "status": "completed", "command": "npm test" },
+        { "kind": "turn.completed", "status": "completed" }
+      ],
+      "rightEvents": [
+        { "kind": "turn.started", "status": "running" },
+        { "kind": "command.started", "status": "running", "command": "npm test" },
+        { "kind": "command.output", "output": "1 test failed" },
+        { "kind": "command.completed", "status": "completed", "command": "npm test" },
+        { "kind": "turn.completed", "status": "completed" }
+      ],
+      "expected": {
+        "alignmentStatus": "resolved",
+        "firstDivergence": {
+          "alignmentIndex": 2,
+          "relation": "changed",
+          "leftSequence": 3,
+          "rightSequence": 3,
+          "reasonCodes": ["output_changed"]
+        },
+        "summary": { "same": 4, "changed": 1, "inserted": 0, "deleted": 0 }
+      }
+    },
+    {
+      "caseId": "right-plan-insertion",
+      "description": "A variant-only plan event is inserted while later events realign.",
+      "leftEvents": [
+        { "kind": "turn.started", "status": "running" },
+        { "kind": "command.started", "status": "running", "command": "npm test" },
+        { "kind": "command.completed", "status": "completed", "command": "npm test" },
+        { "kind": "turn.completed", "status": "completed" }
+      ],
+      "rightEvents": [
+        { "kind": "turn.started", "status": "running" },
+        { "kind": "command.started", "status": "running", "command": "npm test" },
+        { "kind": "plan.updated", "plan": [{ "step": "Inspect failure", "status": "in_progress" }] },
+        { "kind": "command.completed", "status": "completed", "command": "npm test" },
+        { "kind": "turn.completed", "status": "completed" }
+      ],
+      "expected": {
+        "alignmentStatus": "resolved",
+        "firstDivergence": {
+          "alignmentIndex": 2,
+          "relation": "inserted",
+          "leftSequence": null,
+          "rightSequence": 3,
+          "reasonCodes": ["right_event_only"]
+        },
+        "summary": { "same": 4, "changed": 0, "inserted": 1, "deleted": 0 }
+      }
+    },
+    {
+      "caseId": "left-plan-deletion",
+      "description": "A baseline-only plan event is deleted while later events realign.",
+      "leftEvents": [
+        { "kind": "turn.started", "status": "running" },
+        { "kind": "command.started", "status": "running", "command": "npm test" },
+        { "kind": "plan.updated", "plan": [{ "step": "Inspect failure", "status": "in_progress" }] },
+        { "kind": "command.completed", "status": "completed", "command": "npm test" },
+        { "kind": "turn.completed", "status": "completed" }
+      ],
+      "rightEvents": [
+        { "kind": "turn.started", "status": "running" },
+        { "kind": "command.started", "status": "running", "command": "npm test" },
+        { "kind": "command.completed", "status": "completed", "command": "npm test" },
+        { "kind": "turn.completed", "status": "completed" }
+      ],
+      "expected": {
+        "alignmentStatus": "resolved",
+        "firstDivergence": {
+          "alignmentIndex": 2,
+          "relation": "deleted",
+          "leftSequence": 3,
+          "rightSequence": null,
+          "reasonCodes": ["left_event_only"]
+        },
+        "summary": { "same": 4, "changed": 0, "inserted": 0, "deleted": 1 }
+      }
+    },
+    {
+      "caseId": "status-change",
+      "description": "A runtime-reported completion status change is material.",
+      "leftEvents": [
+        { "kind": "turn.started", "status": "running" },
+        { "kind": "command.completed", "status": "completed", "command": "npm test" },
+        { "kind": "turn.completed", "status": "completed" }
+      ],
+      "rightEvents": [
+        { "kind": "turn.started", "status": "running" },
+        { "kind": "command.completed", "status": "failed", "command": "npm test" },
+        { "kind": "turn.completed", "status": "completed" }
+      ],
+      "expected": {
+        "alignmentStatus": "resolved",
+        "firstDivergence": {
+          "alignmentIndex": 1,
+          "relation": "changed",
+          "leftSequence": 2,
+          "rightSequence": 2,
+          "reasonCodes": ["status_changed"]
+        },
+        "summary": { "same": 2, "changed": 1, "inserted": 0, "deleted": 0 }
+      }
+    },
+    {
+      "caseId": "metadata-only-change",
+      "description": "IDs, timestamps, entity IDs, and raw references do not create a divergence.",
+      "leftEvents": [
+        {
+          "kind": "turn.started",
+          "status": "running",
+          "eventId": "left:start",
+          "entityId": "left-turn",
+          "occurredAt": "2026-01-01T00:00:00.000Z",
+          "rawFile": "fixtures/left/raw.jsonl",
+          "rawSequence": 10
+        },
+        {
+          "kind": "turn.completed",
+          "status": "completed",
+          "eventId": "left:end",
+          "entityId": "left-turn",
+          "occurredAt": "2026-01-01T00:00:01.000Z",
+          "rawFile": "fixtures/left/raw.jsonl",
+          "rawSequence": 11
+        }
+      ],
+      "rightEvents": [
+        {
+          "kind": "turn.started",
+          "status": "running",
+          "eventId": "right:start",
+          "entityId": "right-turn",
+          "occurredAt": "2030-12-31T23:59:58.000Z",
+          "rawFile": "fixtures/right/evidence.jsonl",
+          "rawSequence": 80
+        },
+        {
+          "kind": "turn.completed",
+          "status": "completed",
+          "eventId": "right:end",
+          "entityId": "right-turn",
+          "occurredAt": "2030-12-31T23:59:59.000Z",
+          "rawFile": "fixtures/right/evidence.jsonl",
+          "rawSequence": 81
+        }
+      ],
+      "expected": {
+        "alignmentStatus": "resolved",
+        "firstDivergence": null,
+        "summary": { "same": 2, "changed": 0, "inserted": 0, "deleted": 0 }
+      }
+    },
+    {
+      "caseId": "duplicate-output-ambiguity",
+      "description": "Two identical left outputs can each match the single right output at equal cost.",
+      "leftEvents": [
+        { "kind": "turn.started", "status": "running" },
+        { "kind": "command.output", "output": "same observation" },
+        { "kind": "command.output", "output": "same observation" },
+        { "kind": "turn.completed", "status": "completed" }
+      ],
+      "rightEvents": [
+        { "kind": "turn.started", "status": "running" },
+        { "kind": "command.output", "output": "same observation" },
+        { "kind": "turn.completed", "status": "completed" }
+      ],
+      "expected": {
+        "alignmentStatus": "ambiguous",
+        "firstDivergence": null,
+        "summary": { "same": 3, "changed": 0, "inserted": 0, "deleted": 1 }
+      }
+    },
+    {
+      "caseId": "different-kind-replacement-ambiguity",
+      "description": "A different-kind replacement has two equally cheap insertion/deletion orders.",
+      "leftEvents": [
+        { "kind": "turn.started", "status": "running" },
+        { "kind": "plan.updated", "plan": [{ "step": "Inspect evidence", "status": "in_progress" }] },
+        { "kind": "turn.completed", "status": "completed" }
+      ],
+      "rightEvents": [
+        { "kind": "turn.started", "status": "running" },
+        { "kind": "command.output", "output": "inspection complete" },
+        { "kind": "turn.completed", "status": "completed" }
+      ],
+      "expected": {
+        "alignmentStatus": "ambiguous",
+        "firstDivergence": null,
+        "summary": { "same": 2, "changed": 0, "inserted": 1, "deleted": 1 }
+      }
+    }
+  ]
+}
