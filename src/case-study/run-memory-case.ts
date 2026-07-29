@@ -21,6 +21,12 @@ import {
   type MemoryConditionId,
   type PreparedMemoryCase,
 } from "./prepare-memory-case.js";
+import {
+  auditMemoryCaseRuntime,
+  MEMORY_CASE_MODEL,
+  MEMORY_CASE_REASONING_EFFORT,
+  type RuntimeAudit,
+} from "./memory-case-runtime.js";
 
 export type MemoryRepeatId = "R1" | "R2" | "R3";
 export type MemoryExposureStatus =
@@ -31,7 +37,7 @@ export type MemoryExposureStatus =
 interface ExistingPreparedManifest {
   schemaVersion: string;
   kind: "prepared-memory-case";
-  status: "prepared-not-run" | "run-completed";
+  status: "prepared-not-run" | "run-completed" | "run-recorded";
   caseStudyId: string;
   caseFixtureVersion: string;
   caseManifest: string;
@@ -88,13 +94,14 @@ export interface MemoryCaseRunResult {
   trace: RecordCodexTurnResult;
   exposure: MemoryExposureResult;
   workspaceAudit: WorkspaceAudit;
+  runtimeAudit: RuntimeAudit;
   passedStructuralChecks: boolean;
   runManifest: string;
   runLedger: string;
 }
 
 interface CompletedRunManifest extends ExistingPreparedManifest {
-  status: "run-completed";
+  status: "run-recorded";
   runId: string;
   repeatId: MemoryRepeatId;
   endedAt: string;
@@ -103,9 +110,12 @@ interface CompletedRunManifest extends ExistingPreparedManifest {
     status: RecordCodexTurnResult["status"];
     eventCount: number;
     traceDirectory: string;
+    collectorError: string | null;
+    runtime: RecordCodexTurnResult["runtime"];
   };
   exposure: MemoryExposureResult;
   workspaceAudit: WorkspaceAudit;
+  runtimeAudit: RuntimeAudit;
   passedStructuralChecks: boolean;
 }
 
@@ -306,23 +316,31 @@ export async function runMemoryCase(
     timeoutMs: options.timeoutMs,
     sandboxMode: "workspaceWrite",
     networkAccess: false,
+    model: MEMORY_CASE_MODEL,
+    reasoningEffort: MEMORY_CASE_REASONING_EFFORT,
   });
   const replayed = await replay(trace.traceId);
   const exposure = detectMemoryExposure(replayed.events);
   const workspaceAudit = await auditPreparedWorkspace(prepared);
+  const runtimeAudit = auditMemoryCaseRuntime(
+    trace.runtime,
+    prepared.workspaceDirectory,
+  );
   const passedStructuralChecks =
     trace.status === "completed" &&
+    trace.collectorError === null &&
     exposure.status === "exposed" &&
     workspaceAudit.proposalWritten &&
     workspaceAudit.proposalNonBlank &&
     workspaceAudit.unexpectedChangedFiles.length === 0 &&
-    workspaceAudit.missingFiles.length === 0;
+    workspaceAudit.missingFiles.length === 0 &&
+    runtimeAudit.passed;
   const existingManifest = JSON.parse(
     await readFile(prepared.localRunManifest, "utf8"),
   ) as ExistingPreparedManifest;
   const completedManifest: CompletedRunManifest = {
     ...existingManifest,
-    status: "run-completed",
+    status: "run-recorded",
     runId,
     repeatId,
     endedAt: new Date().toISOString(),
@@ -334,9 +352,12 @@ export async function runMemoryCase(
         repositoryRoot,
         trace.traceDirectory,
       ),
+      collectorError: trace.collectorError,
+      runtime: trace.runtime,
     },
     exposure,
     workspaceAudit,
+    runtimeAudit,
     passedStructuralChecks,
   };
 
@@ -354,10 +375,20 @@ export async function runMemoryCase(
       repeatId,
       traceId: trace.traceId,
       traceStatus: trace.status,
+      collectorError: trace.collectorError,
+      cliVersion: trace.runtime.cliVersion,
+      model: trace.runtime.model,
+      modelProvider: trace.runtime.modelProvider,
+      serviceTier: trace.runtime.serviceTier,
+      reasoningEffort: trace.runtime.reasoningEffort,
+      approvalPolicy: trace.runtime.approvalPolicy,
+      sandboxType: trace.runtime.sandbox?.type ?? null,
+      networkAccess: trace.runtime.sandbox?.networkAccess ?? null,
       exposureStatus: exposure.status,
       changedFiles: workspaceAudit.changedFiles,
       unexpectedChangedFiles: workspaceAudit.unexpectedChangedFiles,
       proposalNonBlank: workspaceAudit.proposalNonBlank,
+      runtimeAuditPassed: runtimeAudit.passed,
       passedStructuralChecks,
       runManifest: relativeToRepository(
         repositoryRoot,
@@ -375,6 +406,7 @@ export async function runMemoryCase(
     trace,
     exposure,
     workspaceAudit,
+    runtimeAudit,
     passedStructuralChecks,
     runManifest: prepared.localRunManifest,
     runLedger,

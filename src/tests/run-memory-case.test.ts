@@ -10,6 +10,10 @@ import {
   detectMemoryExposure,
   runMemoryCase,
 } from "../case-study/run-memory-case.js";
+import {
+  MEMORY_CASE_MODEL,
+  MEMORY_CASE_REASONING_EFFORT,
+} from "../case-study/memory-case-runtime.js";
 
 const REPOSITORY_ROOT = fileURLToPath(new URL("../../", import.meta.url));
 
@@ -97,6 +101,26 @@ test("runs one isolated condition with injected collector dependencies", async (
             rawFile: ".trace-inspector/traces/trace_test/raw.jsonl",
             eventCount: 2,
             status: "completed",
+            collectorError: null,
+            runtime: {
+              userAgent: "Codex Desktop/test",
+              cliVersion: "test",
+              platformFamily: "unix",
+              platformOs: "macos",
+              model: MEMORY_CASE_MODEL,
+              modelProvider: "openai",
+              serviceTier: "priority",
+              reasoningEffort: MEMORY_CASE_REASONING_EFFORT,
+              approvalPolicy: "never",
+              sandbox: {
+                type: "workspaceWrite",
+                writableRoots: [],
+                networkAccess: false,
+              },
+              runtimeWorkspaceRoots: [options.cwd],
+              instructionSources: [],
+              multiAgentMode: "explicitRequestOnly",
+            },
           };
         },
         replay: async () => ({
@@ -112,6 +136,11 @@ test("runs one isolated condition with injected collector dependencies", async (
 
     assert.equal(observedRecordOptions?.sandboxMode, "workspaceWrite");
     assert.equal(observedRecordOptions?.networkAccess, false);
+    assert.equal(observedRecordOptions?.model, MEMORY_CASE_MODEL);
+    assert.equal(
+      observedRecordOptions?.reasoningEffort,
+      MEMORY_CASE_REASONING_EFFORT,
+    );
     assert.equal(result.exposure.status, "exposed");
     assert.deepEqual(result.workspaceAudit.changedFiles, ["proposal.md"]);
     assert.deepEqual(result.workspaceAudit.unexpectedChangedFiles, []);
@@ -127,7 +156,7 @@ test("runs one isolated condition with injected collector dependencies", async (
     };
     const ledger = await readFile(ledgerPath, "utf8");
 
-    assert.equal(localManifest.status, "run-completed");
+    assert.equal(localManifest.status, "run-recorded");
     assert.equal(localManifest.runId, "M1-R1");
     assert.equal(localManifest.trace.traceId, "trace_test");
     assert.match(ledger, /"runId":"M1-R1"/);

@@ -459,6 +459,7 @@ Build only the minimum additions needed by this case study:
    Target interface:
 
    ```bash
+   npm run preflight:memory-case
    npm run case-study:memory
    npm run view:memory-demo
    ```

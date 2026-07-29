@@ -4,6 +4,10 @@ import { once } from "node:events";
 import { createInterface } from "node:readline";
 import { asJsonObject } from "../adapters/codex/raw-codex-message.js";
 import {
+  emptyCodexRuntimeMetadata,
+  type CodexRuntimeMetadata,
+} from "../core/codex-runtime-metadata.js";
+import {
   appendRawRecord,
   createTraceDirectory,
   writeManifest,
@@ -17,6 +21,8 @@ export interface RecordCodexTurnOptions {
   timeoutMs?: number;
   sandboxMode?: "readOnly" | "workspaceWrite";
   networkAccess?: boolean;
+  model?: string;
+  reasoningEffort?: string;
 }
 
 export interface RecordCodexTurnResult {
@@ -25,6 +31,8 @@ export interface RecordCodexTurnResult {
   rawFile: string;
   eventCount: number;
   status: TraceManifest["status"];
+  collectorError: string | null;
+  runtime: CodexRuntimeMetadata;
 }
 
 function threadSandboxValue(
@@ -52,6 +60,73 @@ function readResponseThreadId(message: unknown): string | undefined {
   const result = asJsonObject(envelope?.result);
   const thread = asJsonObject(result?.thread);
   return typeof thread?.id === "string" ? thread.id : undefined;
+}
+
+function nullableString(value: unknown): string | null {
+  return typeof value === "string" ? value : null;
+}
+
+function stringArray(value: unknown): string[] {
+  return Array.isArray(value)
+    ? value.filter((item): item is string => typeof item === "string")
+    : [];
+}
+
+function readInitializeMetadata(
+  message: unknown,
+  current: CodexRuntimeMetadata,
+): CodexRuntimeMetadata {
+  const envelope = asJsonObject(message);
+  const result = asJsonObject(envelope?.result);
+
+  if (envelope?.id !== 0 || result === undefined) {
+    return current;
+  }
+
+  return {
+    ...current,
+    userAgent: nullableString(result.userAgent),
+    platformFamily: nullableString(result.platformFamily),
+    platformOs: nullableString(result.platformOs),
+  };
+}
+
+export function readThreadStartMetadata(
+  message: unknown,
+  current: CodexRuntimeMetadata = emptyCodexRuntimeMetadata(),
+): CodexRuntimeMetadata {
+  const envelope = asJsonObject(message);
+  const result = asJsonObject(envelope?.result);
+  const thread = asJsonObject(result?.thread);
+  const sandbox = asJsonObject(result?.sandbox);
+
+  if (envelope?.id !== 1 || result === undefined) {
+    return current;
+  }
+
+  return {
+    ...current,
+    cliVersion: nullableString(thread?.cliVersion),
+    model: nullableString(result.model),
+    modelProvider: nullableString(result.modelProvider),
+    serviceTier: nullableString(result.serviceTier),
+    reasoningEffort: nullableString(result.reasoningEffort),
+    approvalPolicy: nullableString(result.approvalPolicy),
+    sandbox:
+      sandbox === undefined
+        ? null
+        : {
+            type: nullableString(sandbox.type),
+            writableRoots: stringArray(sandbox.writableRoots),
+            networkAccess:
+              typeof sandbox.networkAccess === "boolean"
+                ? sandbox.networkAccess
+                : null,
+          },
+    runtimeWorkspaceRoots: stringArray(result.runtimeWorkspaceRoots),
+    instructionSources: stringArray(result.instructionSources),
+    multiAgentMode: nullableString(result.multiAgentMode),
+  };
 }
 
 function readRequestError(message: unknown): string | undefined {
@@ -113,6 +188,8 @@ export async function recordCodexTurn(
 
   let sequence = 0;
   let status: TraceManifest["status"] = "incomplete";
+  let collectorError: string | null = null;
+  let runtime = emptyCodexRuntimeMetadata();
   let stderr = "";
   let timedOut = false;
 
@@ -160,8 +237,12 @@ export async function recordCodexTurn(
       const requestError = readRequestError(payload);
 
       if (requestError !== undefined) {
-        throw new Error(requestError);
+        collectorError = requestError;
+        break;
       }
+
+      runtime = readInitializeMetadata(payload, runtime);
+      runtime = readThreadStartMetadata(payload, runtime);
 
       if (message?.id === 0 && "result" in message) {
         sendMessage(child.stdin, { method: "initialized", params: {} });
@@ -173,6 +254,7 @@ export async function recordCodexTurn(
             approvalPolicy: "never",
             sandbox: threadSandboxValue(sandboxMode),
             ephemeral: true,
+            model: options.model,
           },
         });
       }
@@ -203,6 +285,14 @@ export async function recordCodexTurn(
             writableRoots: [options.cwd],
             networkAccess: options.networkAccess ?? false,
           };
+        }
+
+        if (options.model !== undefined) {
+          turnStartParams.model = options.model;
+        }
+
+        if (options.reasoningEffort !== undefined) {
+          turnStartParams.effort = options.reasoningEffort;
         }
 
         sendMessage(child.stdin, {
@@ -239,18 +329,26 @@ export async function recordCodexTurn(
       collectorVersion: "0.1.0",
       eventCount: sequence,
       containsSensitiveData: true,
-      codexVersion: "codex-cli 0.145.0-alpha.18",
+      codexVersion:
+        runtime.cliVersion === null
+          ? (runtime.userAgent ?? "unknown Codex runtime")
+          : `codex-cli ${runtime.cliVersion}`,
+      collectorError:
+        timedOut
+          ? `Codex turn timed out after ${timeoutMs} ms`
+          : collectorError,
+      runtime,
     });
   }
 
   if (timedOut) {
-    throw new Error(`Codex turn timed out after ${timeoutMs} ms`);
+    collectorError = `Codex turn timed out after ${timeoutMs} ms`;
   }
 
   if (sequence === 0) {
-    throw new Error(
-      `Codex App Server produced no JSONL messages.${stderr.trim() === "" ? "" : `\n${stderr.trim()}`}`,
-    );
+    collectorError =
+      `Codex App Server produced no JSONL messages.` +
+      (stderr.trim() === "" ? "" : `\n${stderr.trim()}`);
   }
 
   return {
@@ -259,5 +357,7 @@ export async function recordCodexTurn(
     rawFile: paths.raw,
     eventCount: sequence,
     status,
+    collectorError,
+    runtime,
   };
 }

@@ -23,6 +23,12 @@ if (
     });
 
     console.log(`Trace: ${result.trace.traceId} [${result.trace.status}]`);
+    console.log(
+      `Runtime: ${result.trace.runtime.model ?? "unknown model"} / ${result.trace.runtime.reasoningEffort ?? "unknown effort"} / Codex ${result.trace.runtime.cliVersion ?? "unknown version"}`,
+    );
+    console.log(
+      `Sandbox: ${result.trace.runtime.sandbox?.type ?? "unknown"} / network=${String(result.trace.runtime.sandbox?.networkAccess ?? "unknown")}`,
+    );
     console.log(`Workspace: ${result.prepared.workspaceDirectory}`);
     console.log(`Memory exposure: ${result.exposure.status}`);
     console.log(
@@ -33,6 +39,9 @@ if (
     );
     console.log(
       `Proposal written: ${result.workspaceAudit.proposalNonBlank ? "yes" : "no"}`,
+    );
+    console.log(
+      `Runtime metadata audit: ${result.runtimeAudit.passed ? "passed" : "failed"}`,
     );
     console.log(`Run manifest: ${result.runManifest}`);
     console.log(`Run ledger: ${result.runLedger}`);

@@ -3,6 +3,9 @@ import { join } from "node:path";
 import type { TraceEvent } from "../core/trace-event.js";
 import type { TraceSpan } from "../core/trace-span.js";
 import type { DiagnosticFinding } from "../core/diagnostic-finding.js";
+import type {
+  CodexRuntimeMetadata,
+} from "../core/codex-runtime-metadata.js";
 import {
   isRawTraceRecord,
   type RawTraceRecord,
@@ -19,6 +22,8 @@ export interface TraceManifest {
   eventCount: number;
   containsSensitiveData: boolean;
   codexVersion: string;
+  collectorError?: string | null;
+  runtime?: CodexRuntimeMetadata;
 }
 
 export interface TracePaths {

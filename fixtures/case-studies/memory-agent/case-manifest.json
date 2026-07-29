@@ -90,10 +90,10 @@
     "runtimeControls": {
       "agentRuntime": "Codex app-server",
       "workingDirectoryLayout": "identical fresh materialized workspace per run",
-      "network": "disabled by task instruction",
-      "approvalPolicy": "record at run time and hold constant",
-      "model": "record at run time and hold constant",
-      "reasoningEffort": "record at run time and hold constant when exposed",
+      "network": "disabled by sandbox policy",
+      "approvalPolicy": "never",
+      "model": "gpt-5.6-sol",
+      "reasoningEffort": "medium",
       "traceInspectorSchemaVersion": "0.1",
       "comparisonPolicyVersion": "v2-default@0.2.0"
     }

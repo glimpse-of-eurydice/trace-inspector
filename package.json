@@ -16,7 +16,9 @@
     "build": "tsc",
     "start": "node dist/demo.js",
     "prepare:memory-case": "tsc && node dist/cli/prepare-memory-case.js",
-    "record:memory-case": "tsc && node dist/cli/record-memory-case.js"
+    "record:memory-case": "tsc && node dist/cli/record-memory-case.js",
+    "preflight:memory-case": "tsc && node dist/cli/preflight-memory-case.js",
+    "case-study:memory": "tsc && node dist/cli/run-memory-matrix.js"
   },
   "devDependencies": {
     "@types/node": "^22.20.1",

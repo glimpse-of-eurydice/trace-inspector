@@ -172,6 +172,21 @@ Record one declared condition/repeat with a local authenticated Codex runtime:
 npm run record:memory-case -- M1 R1
 ```
 
+Before collecting the predeclared nine-run matrix, run the clean-worktree,
+runtime-control, ordering, and collision checks:
+
+```bash
+npm run preflight:memory-case
+npm run case-study:memory
+```
+
+The matrix command fixes the model to `gpt-5.6-sol`, reasoning effort to
+`medium`, approval policy to `never`, workspace sandboxing with network
+disabled, and the interleaved order declared in the frozen case manifest. It
+records the runtime-resolved values from every `thread/start` response and
+flags cross-run drift. Failed, incomplete, or unexposed turns are preserved and
+never silently retried.
+
 The run wrapper creates a fresh workspace, installs only the assigned
 `memory.md`, disables network access through the Codex sandbox policy, records
 and replays the raw trace, checks for a completed content-read of `memory.md`,
@@ -219,6 +234,8 @@ npm run compare:demo
 npm run eval:golden
 npm run prepare:memory-case -- M1
 npm run record:memory-case -- M1 R1
+npm run preflight:memory-case
+npm run case-study:memory
 npm run record -- "Reply with exactly TRACE_INSPECTOR_SMOKE_OK. Do not run commands, use tools, or edit files."
 npm run view -- latest
 ```
@@ -230,7 +247,7 @@ Git because they may contain prompts, paths, command output, or code.
 
 The V0 collector-to-viewer path and the evidence-linked V1 core are implemented.
 Replay reconstructs derived spans, writes `spans.jsonl`, and writes deterministic
-diagnostics to `findings.jsonl`. Twenty-eight tests cover normalization, span reconstruction, comparison,
+diagnostics to `findings.jsonl`. Thirty-two tests cover normalization, span reconstruction, comparison,
 fixture privacy, isolated memory-case preparation and recording, and
 evidence-level boundaries. A
 real Codex run that executed the harmless failing command `false` produced one
