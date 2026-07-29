@@ -1,0 +1,31 @@
+{
+  "schemaVersion": "0.1",
+  "asOf": "2023-10-28T17:30:00",
+  "source": "synthetic self-report fixture",
+  "scale": {
+    "minimum": 1,
+    "maximum": 5,
+    "meaning": "Higher values indicate more self-reported available energy."
+  },
+  "entries": [
+    {
+      "date": "2023-10-26",
+      "availableEnergy": 3,
+      "sleepHours": 7,
+      "note": "A normal workday; felt reasonably steady afterward."
+    },
+    {
+      "date": "2023-10-27",
+      "availableEnergy": 2,
+      "sleepHours": 5.5,
+      "note": "Worked later than planned and felt drained."
+    },
+    {
+      "date": "2023-10-28",
+      "availableEnergy": 2,
+      "sleepHours": 6,
+      "note": "Would prefer a quieter Sunday and fewer demanding transitions."
+    }
+  ],
+  "interpretationBoundary": "This is recent self-reported evidence, not a medical assessment or a prediction of Sunday's condition."
+}

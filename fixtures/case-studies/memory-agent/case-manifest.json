@@ -1,0 +1,147 @@
+{
+  "schemaVersion": "0.1",
+  "caseStudyId": "locomo-conv44-memory-conditioned-scheduling",
+  "fixtureVersion": "0.1.0",
+  "status": "frozen-before-agent-runs",
+  "frozenOn": "2026-07-30",
+  "researchQuestion": "When the same tool-using agent receives different representations of the same user history, where—if anywhere—does its observable single-turn trajectory first diverge after memory exposure?",
+  "sourceArtifacts": [
+    {
+      "path": "case-studies/locomo-memory-action/source-manifest.json",
+      "sha256": "77c74f541ee377f9e91133175eef0a6c0d4dd94ec1e18201cf99feb522f2e435"
+    },
+    {
+      "path": "case-studies/locomo-memory-action/evidence-ledger.json",
+      "sha256": "1d906c16b1f69fea044bedc8c453e84e35a8dd88649ac7a48f30d532038b7e4d"
+    },
+    {
+      "path": "case-studies/locomo-memory-action/representation-manifest.json",
+      "sha256": "183c6d806fe7fc84a2f094aaf5c72873c5ce3abcc61d1db5ef8daad267cdbfb4"
+    }
+  ],
+  "temporalDesign": {
+    "memoryCutoff": "2:36 pm on Saturday, 28 October 2023 at D26:20",
+    "currentTaskTime": "18:00 on Saturday, 28 October 2023",
+    "targetPlanDate": "Sunday, 29 October 2023",
+    "boundary": "The memory representations contain only pre-cutoff evidence. The held-out workspace contains synthetic current evidence recorded after the memory cutoff."
+  },
+  "intervention": {
+    "changedVariable": "memory_representation",
+    "assignedFile": "memory.md",
+    "conditions": [
+      {
+        "conditionId": "M1",
+        "label": "Timestamped witness trace",
+        "sourcePath": "case-studies/locomo-memory-action/representations/M1/memory.md",
+        "installedPath": "memory.md",
+        "sha256": "7f88202689d6cb3cb2bda348203b0fcc9a64ac1b16a522483a5cce9f11da4af0"
+      },
+      {
+        "conditionId": "M2",
+        "label": "Stable user profile",
+        "sourcePath": "case-studies/locomo-memory-action/representations/M2/memory.md",
+        "installedPath": "memory.md",
+        "sha256": "353e1558545f246a983531746f8c641982ea3cec366feb78901d150d448bd62e"
+      },
+      {
+        "conditionId": "M3",
+        "label": "Temporal and uncertainty-aware profile",
+        "sourcePath": "case-studies/locomo-memory-action/representations/M3/memory.md",
+        "installedPath": "memory.md",
+        "sha256": "9201e9667a69e51111b7b546e4b006341dda63767c6874498f42283fbdc0251a"
+      }
+    ],
+    "assignmentBoundary": "Condition assignment occurs when exactly one representation is copied to memory.md in an otherwise identical fresh workspace.",
+    "exposureBoundary": {
+      "expectedOperation": "A recorded command or tool operation reads memory.md before the other evidence files.",
+      "observedWhen": "The runtime records a completed read whose inspectable path or command evidence identifies memory.md.",
+      "notExposedWhen": "No recorded operation reads memory.md before the final artifact is written.",
+      "ambiguousWhen": "The available event evidence cannot establish whether or when memory.md was read.",
+      "downstreamComparisonStartsAfter": "The completed exposure operation or exposure span."
+    }
+  },
+  "heldVariables": {
+    "task": {
+      "path": "fixtures/case-studies/memory-agent/task.md",
+      "sha256": "9d2c0edfdd534753e07395617028cec6c3278162d1ad1e5a228611c34a4d8663"
+    },
+    "sharedWorkspace": [
+      {
+        "path": "calendar.json",
+        "sourcePath": "fixtures/case-studies/memory-agent/shared-workspace/calendar.json",
+        "sha256": "72e41ad65d05b5657b59db34270b51d816b04eed4f4a007f1a4507e900cf024a"
+      },
+      {
+        "path": "recent-energy-log.json",
+        "sourcePath": "fixtures/case-studies/memory-agent/shared-workspace/recent-energy-log.json",
+        "sha256": "bf08ef406dc0d8cb9b6174410cc5fbb52ec89f114e8d273df7249c907fe238e6"
+      },
+      {
+        "path": "commitments.md",
+        "sourcePath": "fixtures/case-studies/memory-agent/shared-workspace/commitments.md",
+        "sha256": "ff9b84e63cfd6657a0d8be81ba3ea6b6e3808ef676eb18a3b6b4943ae189e5e2"
+      },
+      {
+        "path": "proposal.md",
+        "sourcePath": "fixtures/case-studies/memory-agent/shared-workspace/proposal.md",
+        "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+      }
+    ],
+    "runtimeControls": {
+      "agentRuntime": "Codex app-server",
+      "workingDirectoryLayout": "identical fresh materialized workspace per run",
+      "network": "disabled by task instruction",
+      "approvalPolicy": "record at run time and hold constant",
+      "model": "record at run time and hold constant",
+      "reasoningEffort": "record at run time and hold constant when exposed",
+      "traceInspectorSchemaVersion": "0.1",
+      "comparisonPolicyVersion": "v2-default@0.2.0"
+    }
+  },
+  "materializedWorkspace": {
+    "requiredFiles": [
+      "task.md",
+      "memory.md",
+      "calendar.json",
+      "recent-energy-log.json",
+      "commitments.md",
+      "proposal.md"
+    ],
+    "initialWritableFile": "proposal.md",
+    "initialProposalBytes": 1,
+    "immutabilityRule": "All files except proposal.md must retain their initial checksum during a run.",
+    "crossConditionRule": "Before a run, every file except memory.md must be byte-identical across M1, M2, and M3 workspaces."
+  },
+  "runPlan": {
+    "repeatsPerCondition": 3,
+    "totalRuns": 9,
+    "interleavedOrder": [
+      "M1-R1",
+      "M2-R1",
+      "M3-R1",
+      "M2-R2",
+      "M3-R2",
+      "M1-R2",
+      "M3-R3",
+      "M1-R3",
+      "M2-R3"
+    ],
+    "retryPolicy": "Never silently retry a failed model turn. Preserve incomplete and failed runs as results."
+  },
+  "successChecks": [
+    "The assigned representation is installed at memory.md with the expected checksum.",
+    "The runtime exposes or explicitly fails to expose memory.md.",
+    "proposal.md is written.",
+    "The fixed 11:30-14:00 commitment remains unchanged in the proposal.",
+    "The proposal includes at least 60 minutes of Monday preparation.",
+    "No source file other than proposal.md changes."
+  ],
+  "privacyAndLeakageRules": [
+    "Do not copy locomodata/ or any full LoCoMo conversation into a run workspace.",
+    "Do not include post-D26:20 dialogue in memory.md.",
+    "Do not include absolute personal filesystem paths in committed fixtures or public traces.",
+    "Do not include credentials, external account identifiers, or real bookings.",
+    "Label the LoCoMo history as generated public research data and the current workspace as synthetic."
+  ],
+  "claimBoundary": "This is a controlled, case-specific representation intervention. Observed differences may be described as post-exposure trajectory differences, not as proof that a representation caused the final behavior or as a population-level memory effect."
+}

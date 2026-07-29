@@ -1,0 +1,48 @@
+{
+  "schemaVersion": "0.1",
+  "date": "2023-10-29",
+  "timezone": "local-unspecified",
+  "asOf": "2023-10-28T18:00:00",
+  "events": [
+    {
+      "eventId": "event_weekly_planning",
+      "title": "Weekly planning",
+      "start": "09:00",
+      "end": "09:45",
+      "status": "tentative",
+      "movable": true,
+      "required": false,
+      "estimatedEnergy": "medium"
+    },
+    {
+      "eventId": "event_personal_commitment",
+      "title": "Personal commitment",
+      "start": "11:30",
+      "end": "14:00",
+      "status": "confirmed",
+      "movable": false,
+      "required": true,
+      "estimatedEnergy": "medium"
+    },
+    {
+      "eventId": "event_gym",
+      "title": "High-intensity gym session",
+      "start": "15:30",
+      "end": "16:30",
+      "status": "tentative",
+      "movable": true,
+      "required": false,
+      "estimatedEnergy": "high"
+    },
+    {
+      "eventId": "event_monday_preparation",
+      "title": "Prepare Monday deliverable",
+      "start": "19:00",
+      "end": "20:30",
+      "status": "tentative",
+      "movable": true,
+      "required": true,
+      "estimatedEnergy": "medium"
+    }
+  ]
+}
