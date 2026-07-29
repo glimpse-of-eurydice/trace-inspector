@@ -48,7 +48,10 @@ An AI evaluation researcher debugging codex runs.
   evidence from both sides in a side-by-side viewer;
 - prepare and record one isolated memory-conditioned Codex run with explicit
   condition/repeat metadata, sandboxed local writes, exposure evidence, and a
-  post-run workspace audit.
+  post-run workspace audit;
+- analyze a completed nine-run memory matrix offline, separating expected
+  memory exposure from downstream comparison, preserving ambiguous alignments,
+  and preparing a blinded artifact-review bundle.
 
 ## What remains
 
@@ -178,6 +181,7 @@ runtime-control, ordering, and collision checks:
 ```bash
 npm run preflight:memory-case
 npm run case-study:memory
+npm run analyze:memory-case
 ```
 
 The matrix command fixes the model to `gpt-5.6-sol`, reasoning effort to
@@ -192,8 +196,22 @@ The run wrapper creates a fresh workspace, installs only the assigned
 and replays the raw trace, checks for a completed content-read of `memory.md`,
 and verifies that only `proposal.md` changed. Local workspaces, traces, run
 manifests, and the run ledger stay under `.trace-inspector/` and are ignored by
-Git. One M1-R1 smoke run has passed these structural checks; the predeclared
-nine-run matrix and intervention-aware comparisons remain future work. See
+Git.
+
+The nine-run matrix has completed. Offline analysis replays all runs, builds a
+deterministic operation-level projection, writes descriptive run and comparison
+tables, and creates blinded copies of all final proposals:
+
+```bash
+npm run analyze:memory-case
+```
+
+It does not call a model. The selected R1 primary comparisons are ambiguous
+under the versioned alignment policy, so the analyzer retains their evidence
+but withholds a first-divergence claim. This abstention is a supported result,
+not a failed run. Follow
+[the manual review guide](docs/MEMORY_AGENT_MANUAL_REVIEW_GUIDE.md) to annotate
+the blinded final artifacts before opening the generated blinding map. See
 [docs/memory-agent-case-study-plan.md](docs/memory-agent-case-study-plan.md) for
 the frozen design and claim boundaries.
 
@@ -236,6 +254,7 @@ npm run prepare:memory-case -- M1
 npm run record:memory-case -- M1 R1
 npm run preflight:memory-case
 npm run case-study:memory
+npm run analyze:memory-case
 npm run record -- "Reply with exactly TRACE_INSPECTOR_SMOKE_OK. Do not run commands, use tools, or edit files."
 npm run view -- latest
 ```
@@ -247,9 +266,9 @@ Git because they may contain prompts, paths, command output, or code.
 
 The V0 collector-to-viewer path and the evidence-linked V1 core are implemented.
 Replay reconstructs derived spans, writes `spans.jsonl`, and writes deterministic
-diagnostics to `findings.jsonl`. Thirty-two tests cover normalization, span reconstruction, comparison,
+diagnostics to `findings.jsonl`. Thirty-four tests cover normalization, span reconstruction, comparison,
 fixture privacy, isolated memory-case preparation and recording, and
-evidence-level boundaries. A
+automatic memory-case projection and evidence-level boundaries. A
 real Codex run that executed the harmless failing command `false` produced one
 observed failure finding linked to its start and completion events. Interrupted
 and incomplete diagnostics are currently verified with synthetic tests, not

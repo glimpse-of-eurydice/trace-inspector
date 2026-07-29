@@ -546,10 +546,9 @@ golden set, documentation, and tests were committed before case runs began.
 
 **End-of-day artifact:** nine indexed traces plus a run ledger.
 
-Current status: the run wrapper and ledger are implemented, and one real M1-R1
-smoke run completed with observed memory exposure, a non-blank proposal, and no
-unexpected workspace changes. The remaining eight declared runs have not been
-executed.
+Current status: complete. All nine declared runs completed with observed memory
+exposure, a non-blank proposal, and no unexpected workspace changes. The local
+matrix manifest retains all run and runtime-control metadata.
 
 ### Day 3 — Compare and package
 
@@ -594,11 +593,12 @@ The case study is complete when:
 - [x] one public-source manifest and evidence ledger are frozen;
 - [x] M1, M2, and M3 pass the manual representation audit;
 - [x] one tool-using task runs in isolated workspaces;
-- [ ] three real runs per condition are recorded;
+- [x] three real runs per condition are recorded;
 - [x] every completed run preserves raw and normalized evidence;
 - [x] intervention assignment and exposure are explicitly represented;
-- [ ] generic and downstream first divergence are both available;
-- [ ] ambiguous or absent divergence can be reported;
+- [x] generic and downstream comparisons are available, with first divergence
+  withheld when the alignment is not unique;
+- [x] ambiguous or absent divergence can be reported;
 - [ ] the final artifacts are compared descriptively;
 - [ ] one credential-free public replay demo works;
 - [x] privacy tests reject personal paths and credential-like content;
