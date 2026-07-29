@@ -148,7 +148,7 @@ async function sha256(path: string): Promise<string> {
 }
 
 const MEMORY_CONTENT_READ_PATTERN =
-  /(?:^|[\s;&|])(?:cat|sed|head|tail|less|more|awk|grep|rg)\b[^;\n|]*\bmemory\.md\b/i;
+  /(?:^|[\s;&|"'(])(?:cat|sed|head|tail|less|more|awk|grep|rg)\b[^;\n|]*\bmemory\.md\b/i;
 
 function eventReadsMemory(event: TraceEvent): boolean {
   if (

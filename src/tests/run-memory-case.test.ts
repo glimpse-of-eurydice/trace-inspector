@@ -49,11 +49,15 @@ function commandEvent(
 }
 
 test("detects completed, incomplete, and absent memory exposure", () => {
-  const started = commandEvent(1, "command.started", "sed -n 1,220p memory.md");
+  const started = commandEvent(
+    1,
+    "command.started",
+    `/bin/zsh -lc "sed -n '1,220p' memory.md"`,
+  );
   const completed = commandEvent(
     2,
     "command.completed",
-    "sed -n 1,220p memory.md",
+    `/bin/zsh -lc "sed -n '1,220p' memory.md"`,
   );
 
   const statusOnly = commandEvent(
