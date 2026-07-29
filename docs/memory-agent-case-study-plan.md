@@ -519,8 +519,8 @@ Do not begin the case study until:
 - the current comparison policy is versioned and documented;
 - current V2 work is committed with passing tests.
 
-Current status: the implementation and tests satisfy the technical criteria;
-the remaining gate is reviewing and committing the complete V2 change set.
+Current status: complete. The versioned V2 policy, ambiguity handling, synthetic
+golden set, documentation, and tests were committed before case runs began.
 
 ### Day 1 — Freeze the case
 
@@ -544,6 +544,11 @@ the remaining gate is reviewing and committing the complete V2 change set.
 - record incomplete, failed, or unexposed runs without hiding them.
 
 **End-of-day artifact:** nine indexed traces plus a run ledger.
+
+Current status: the run wrapper and ledger are implemented, and one real M1-R1
+smoke run completed with observed memory exposure, a non-blank proposal, and no
+unexpected workspace changes. The remaining eight declared runs have not been
+executed.
 
 ### Day 3 — Compare and package
 
@@ -587,16 +592,16 @@ The case study is complete when:
 
 - [x] one public-source manifest and evidence ledger are frozen;
 - [x] M1, M2, and M3 pass the manual representation audit;
-- [ ] one tool-using task runs in isolated workspaces;
+- [x] one tool-using task runs in isolated workspaces;
 - [ ] three real runs per condition are recorded;
-- [ ] every run preserves raw and normalized evidence;
-- [ ] intervention assignment and exposure are explicitly represented;
+- [x] every completed run preserves raw and normalized evidence;
+- [x] intervention assignment and exposure are explicitly represented;
 - [ ] generic and downstream first divergence are both available;
 - [ ] ambiguous or absent divergence can be reported;
 - [ ] the final artifacts are compared descriptively;
 - [ ] one credential-free public replay demo works;
-- [ ] privacy tests reject personal paths and credential-like content;
-- [ ] README language stays case-level and non-causal;
+- [x] privacy tests reject personal paths and credential-like content;
+- [x] README language stays case-level and non-causal;
 - [ ] tests, typecheck, and build pass from a clean checkout.
 
 ---

@@ -45,7 +45,10 @@ An AI evaluation researcher debugging codex runs.
   optimum is not unique;
 - evaluate the policy against an eight-pair synthetic golden set;
 - locate the first observable divergence and inspect normalized and raw
-  evidence from both sides in a side-by-side viewer.
+  evidence from both sides in a side-by-side viewer;
+- prepare and record one isolated memory-conditioned Codex run with explicit
+  condition/repeat metadata, sandboxed local writes, exposure evidence, and a
+  post-run workspace audit.
 
 ## What remains
 
@@ -148,6 +151,37 @@ the inferred divergence.
 
 </details>
 
+## Memory-conditioned agent case study (in progress)
+
+The first case study asks where an observable Codex trajectory diverges—if it
+does—when the same local planning task receives three representations of the
+same frozen LoCoMo history: a timestamped witness trace (M1), a stable profile
+(M2), or a temporal and uncertainty-aware profile (M3). This is a controlled
+case-specific intervention, not a population-level memory benchmark or a causal
+claim about model internals.
+
+Prepare a workspace without invoking a model:
+
+```bash
+npm run prepare:memory-case -- M1
+```
+
+Record one declared condition/repeat with a local authenticated Codex runtime:
+
+```bash
+npm run record:memory-case -- M1 R1
+```
+
+The run wrapper creates a fresh workspace, installs only the assigned
+`memory.md`, disables network access through the Codex sandbox policy, records
+and replays the raw trace, checks for a completed content-read of `memory.md`,
+and verifies that only `proposal.md` changed. Local workspaces, traces, run
+manifests, and the run ledger stay under `.trace-inspector/` and are ignored by
+Git. One M1-R1 smoke run has passed these structural checks; the predeclared
+nine-run matrix and intervention-aware comparisons remain future work. See
+[docs/memory-agent-case-study-plan.md](docs/memory-agent-case-study-plan.md) for
+the frozen design and claim boundaries.
+
 ## Development milestones
 
 - **V0 — See one run:** capture, normalize, save, and visualize one real Codex
@@ -183,6 +217,8 @@ npm run demo:fixture
 npm run view:demo
 npm run compare:demo
 npm run eval:golden
+npm run prepare:memory-case -- M1
+npm run record:memory-case -- M1 R1
 npm run record -- "Reply with exactly TRACE_INSPECTOR_SMOKE_OK. Do not run commands, use tools, or edit files."
 npm run view -- latest
 ```
@@ -194,8 +230,9 @@ Git because they may contain prompts, paths, command output, or code.
 
 The V0 collector-to-viewer path and the evidence-linked V1 core are implemented.
 Replay reconstructs derived spans, writes `spans.jsonl`, and writes deterministic
-diagnostics to `findings.jsonl`. Twenty tests cover normalization, span
-reconstruction, comparison, fixture privacy, and evidence-level boundaries. A
+diagnostics to `findings.jsonl`. Twenty-eight tests cover normalization, span reconstruction, comparison,
+fixture privacy, isolated memory-case preparation and recording, and
+evidence-level boundaries. A
 real Codex run that executed the harmless failing command `false` produced one
 observed failure finding linked to its start and completion events. Interrupted
 and incomplete diagnostics are currently verified with synthetic tests, not

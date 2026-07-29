@@ -15,6 +15,8 @@ export interface RecordCodexTurnOptions {
   prompt: string;
   cwd: string;
   timeoutMs?: number;
+  sandboxMode?: "readOnly" | "workspaceWrite";
+  networkAccess?: boolean;
 }
 
 export interface RecordCodexTurnResult {
@@ -23,6 +25,14 @@ export interface RecordCodexTurnResult {
   rawFile: string;
   eventCount: number;
   status: TraceManifest["status"];
+}
+
+function threadSandboxValue(
+  sandboxMode: NonNullable<RecordCodexTurnOptions["sandboxMode"]>,
+): "read-only" | "workspace-write" {
+  return sandboxMode === "workspaceWrite"
+    ? "workspace-write"
+    : "read-only";
 }
 
 function createTraceId(): string {
@@ -42,6 +52,23 @@ function readResponseThreadId(message: unknown): string | undefined {
   const result = asJsonObject(envelope?.result);
   const thread = asJsonObject(result?.thread);
   return typeof thread?.id === "string" ? thread.id : undefined;
+}
+
+function readRequestError(message: unknown): string | undefined {
+  const envelope = asJsonObject(message);
+  const error = asJsonObject(envelope?.error);
+
+  if (error === undefined) {
+    return undefined;
+  }
+
+  const requestId = envelope?.id;
+  const detail =
+    typeof error.message === "string"
+      ? error.message
+      : JSON.stringify(error);
+
+  return `Codex App Server request ${String(requestId)} failed: ${detail}`;
 }
 
 function readTurnCompletionStatus(
@@ -76,6 +103,7 @@ export async function recordCodexTurn(
   const startedAt = new Date().toISOString();
   const timeoutMs = options.timeoutMs ?? 120_000;
   const codexBinary = await resolveCodexBinary();
+  const sandboxMode = options.sandboxMode ?? "readOnly";
   const child = spawn(codexBinary, ["app-server", "--stdio"], {
     cwd: options.cwd,
     stdio: ["pipe", "pipe", "pipe"],
@@ -129,6 +157,11 @@ export async function recordCodexTurn(
       });
 
       const message = asJsonObject(payload);
+      const requestError = readRequestError(payload);
+
+      if (requestError !== undefined) {
+        throw new Error(requestError);
+      }
 
       if (message?.id === 0 && "result" in message) {
         sendMessage(child.stdin, { method: "initialized", params: {} });
@@ -138,7 +171,7 @@ export async function recordCodexTurn(
           params: {
             cwd: options.cwd,
             approvalPolicy: "never",
-            sandbox: "read-only",
+            sandbox: threadSandboxValue(sandboxMode),
             ephemeral: true,
           },
         });
@@ -151,19 +184,31 @@ export async function recordCodexTurn(
           throw new Error("thread/start response did not include a thread id");
         }
 
+        const turnStartParams: Record<string, unknown> = {
+          threadId,
+          input: [
+            {
+              type: "text",
+              text: options.prompt,
+              text_elements: [],
+            },
+          ],
+        };
+
+        if (sandboxMode === "workspaceWrite") {
+          turnStartParams.cwd = options.cwd;
+          turnStartParams.approvalPolicy = "never";
+          turnStartParams.sandboxPolicy = {
+            type: "workspaceWrite",
+            writableRoots: [options.cwd],
+            networkAccess: options.networkAccess ?? false,
+          };
+        }
+
         sendMessage(child.stdin, {
           method: "turn/start",
           id: 2,
-          params: {
-            threadId,
-            input: [
-              {
-                type: "text",
-                text: options.prompt,
-                text_elements: [],
-              },
-            ],
-          },
+          params: turnStartParams,
         });
       }
 

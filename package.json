@@ -15,7 +15,8 @@
     "typecheck": "tsc --noEmit",
     "build": "tsc",
     "start": "node dist/demo.js",
-    "prepare:memory-case": "tsc && node dist/cli/prepare-memory-case.js"
+    "prepare:memory-case": "tsc && node dist/cli/prepare-memory-case.js",
+    "record:memory-case": "tsc && node dist/cli/record-memory-case.js"
   },
   "devDependencies": {
     "@types/node": "^22.20.1",
