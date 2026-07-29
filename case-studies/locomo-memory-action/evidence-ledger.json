@@ -1,0 +1,361 @@
+{
+  "schemaVersion": "0.1",
+  "caseStudyId": "locomo-conv44-memory-conditioned-scheduling",
+  "sourceManifest": "case-studies/locomo-memory-action/source-manifest.json",
+  "status": "frozen-for-representation-drafting",
+  "focalSpeaker": "Andrew",
+  "cutoffDialogueId": "D26:20",
+  "evidenceModel": {
+    "sourceRecordStatus": "observed",
+    "contentClaimStatus": "speaker-reported",
+    "interpretationStatus": "inferred only when explicitly labeled",
+    "rule": "Every representation claim must cite one or more fact IDs from this ledger. Fact IDs preserve what was reported; they do not establish real-world truth."
+  },
+  "facts": [
+    {
+      "factId": "F01",
+      "label": "Nature as restorative",
+      "statement": "Andrew repeatedly reported that hiking and being in nature feel peaceful, soothing, and restorative to him.",
+      "claimStatus": "speaker-reported",
+      "temporalScope": "recurring value reported by 16 April 2023",
+      "confidence": "high within the conversation",
+      "sourceRefs": [
+        {
+          "role": "support",
+          "sampleId": "conv-44",
+          "sessionId": "session_3",
+          "sourceDateTime": "4:19 pm on 16 April, 2023",
+          "dialogueId": "D3:1",
+          "speaker": "Andrew",
+          "excerpt": "Super fun but kinda sad not being out in nature - that's when I feel like I'm really thriving. Oh man, I miss the peacefulness of being out on a hike."
+        },
+        {
+          "role": "support",
+          "sampleId": "conv-44",
+          "sessionId": "session_3",
+          "sourceDateTime": "4:19 pm on 16 April, 2023",
+          "dialogueId": "D3:5",
+          "speaker": "Andrew",
+          "excerpt": "It's like hitting the reset button when life gets too chaotic. Nature has a way of being really soothing."
+        }
+      ],
+      "representationHazards": [
+        "Do not convert an enduring value into evidence that a demanding outdoor activity is always feasible.",
+        "Do not infer current energy or availability from this preference alone."
+      ]
+    },
+    {
+      "factId": "F02",
+      "label": "High-intensity outdoor aspiration",
+      "statement": "After one successful rock-climbing class, Andrew reported feeling hooked and expressed an intention to try outdoor activities more often, including tentative interest in kayaking and bungee jumping.",
+      "claimStatus": "speaker-reported",
+      "temporalScope": "aspiration expressed on 13 June 2023",
+      "confidence": "medium",
+      "sourceRefs": [
+        {
+          "role": "support",
+          "sampleId": "conv-44",
+          "sessionId": "session_8",
+          "sourceDateTime": "5:23 pm on 13 June, 2023",
+          "dialogueId": "D8:1",
+          "speaker": "Andrew",
+          "excerpt": "It was a fantastic experience and now I'm hooked. Think I'm going to try to do more outdoor activities like this every week!"
+        },
+        {
+          "role": "support",
+          "sampleId": "conv-44",
+          "sessionId": "session_8",
+          "sourceDateTime": "5:23 pm on 13 June, 2023",
+          "dialogueId": "D8:7",
+          "speaker": "Andrew",
+          "excerpt": "It has definitely encouraged me to try more outdoor activities like kayaking and maybe bungee jumping?"
+        }
+      ],
+      "representationHazards": [
+        "This is an intention following a salient event, not evidence of a stable weekly routine.",
+        "Preserve the tentative wording around bungee jumping."
+      ]
+    },
+    {
+      "factId": "F03",
+      "label": "Work-related constraint emerging",
+      "statement": "Andrew reported that work was piling up, leaving him stressed, indoors, and less able to pursue outdoor activities.",
+      "claimStatus": "speaker-reported",
+      "temporalScope": "reported from 11 July through 6 September 2023",
+      "confidence": "high within the conversation",
+      "sourceRefs": [
+        {
+          "role": "support",
+          "sampleId": "conv-44",
+          "sessionId": "session_12",
+          "sourceDateTime": "10:05 am on 11 July, 2023",
+          "dialogueId": "D12:3",
+          "speaker": "Andrew",
+          "excerpt": "Work has been piling up and I've been stuck inside. I miss the peace and feeling of freedom that comes with going for a hike."
+        },
+        {
+          "role": "support",
+          "sampleId": "conv-44",
+          "sessionId": "session_18",
+          "sourceDateTime": "7:49 pm on 6 September, 2023",
+          "dialogueId": "D18:1",
+          "speaker": "Andrew",
+          "excerpt": "Work's been tough and stressful, so my outdoor activities have taken a backseat. Finding balance has been challenging."
+        }
+      ],
+      "representationHazards": [
+        "Do not silently make a dated temporary state permanent.",
+        "Do not erase the continuing value Andrew places on nature."
+      ]
+    },
+    {
+      "factId": "F04",
+      "label": "Low-burden coping behavior",
+      "statement": "Andrew reported that small activities such as morning coffee and a lunchtime walk helped him recharge.",
+      "claimStatus": "speaker-reported",
+      "temporalScope": "current coping behavior reported on 6 September 2023",
+      "confidence": "high within the conversation",
+      "sourceRefs": [
+        {
+          "role": "support",
+          "sampleId": "conv-44",
+          "sessionId": "session_18",
+          "sourceDateTime": "7:49 pm on 6 September, 2023",
+          "dialogueId": "D18:5",
+          "speaker": "Andrew",
+          "excerpt": "I've been adding simple things to my day like grabbing a coffee in the morning or going for a walk at lunch. It kinda helps me recharge and chill out a little."
+        }
+      ],
+      "representationHazards": [
+        "A reported helpful behavior is not a request to schedule it automatically.",
+        "The evidence supports low burden, not a specific required duration or location."
+      ]
+    },
+    {
+      "factId": "F05",
+      "label": "Temporary pet-related hiking constraint",
+      "statement": "Andrew reported that taking Toby hiking was difficult at that time because Toby was still young.",
+      "claimStatus": "speaker-reported",
+      "temporalScope": "temporary constraint reported on 6 September 2023",
+      "confidence": "high within the conversation",
+      "sourceRefs": [
+        {
+          "role": "context",
+          "sampleId": "conv-44",
+          "sessionId": "session_18",
+          "sourceDateTime": "7:49 pm on 6 September, 2023",
+          "dialogueId": "D18:16",
+          "speaker": "Audrey",
+          "excerpt": "Are you planning to hike with Toby someday?"
+        },
+        {
+          "role": "support",
+          "sampleId": "conv-44",
+          "sessionId": "session_18",
+          "sourceDateTime": "7:49 pm on 6 September, 2023",
+          "dialogueId": "D18:17",
+          "speaker": "Andrew",
+          "excerpt": "I've been wanting to for a while, but it's a bit difficult since Toby is still so young."
+        }
+      ],
+      "representationHazards": [
+        "Do not assume that Toby remains too young indefinitely.",
+        "The constraint concerns hiking with Toby, not all outdoor activity."
+      ]
+    },
+    {
+      "factId": "F06",
+      "label": "Recent work-life update",
+      "statement": "On 4 October, Andrew said he used to hike often but that hiking and access to nature had become harder because of his work-life balance and city environment.",
+      "claimStatus": "speaker-reported",
+      "temporalScope": "recent state reported on 4 October 2023",
+      "confidence": "high within the conversation",
+      "sourceRefs": [
+        {
+          "role": "support",
+          "sampleId": "conv-44",
+          "sessionId": "session_21",
+          "sourceDateTime": "4:18 pm on 4 October, 2023",
+          "dialogueId": "D21:5",
+          "speaker": "Andrew",
+          "excerpt": "Used to hike a lot, but it's more challenging now with my work life balance."
+        },
+        {
+          "role": "support",
+          "sampleId": "conv-44",
+          "sessionId": "session_21",
+          "sourceDateTime": "4:18 pm on 4 October, 2023",
+          "dialogueId": "D21:7",
+          "speaker": "Andrew",
+          "excerpt": "Exploring nature was my escape - a way to find peace. But with my job and living here, it's been harder to get that feeling back."
+        }
+      ],
+      "representationHazards": [
+        "Preserve the distinction between wanting nature and being able to access it.",
+        "Do not summarize this as Andrew no longer liking hiking."
+      ]
+    },
+    {
+      "factId": "F07",
+      "label": "Acceptance of an indoor nature alternative",
+      "statement": "After Audrey suggested house plants as a city-compatible way to access some calm, Andrew said he would look into getting more plants.",
+      "claimStatus": "speaker-reported",
+      "temporalScope": "tentative intention expressed on 4 October 2023",
+      "confidence": "medium",
+      "sourceRefs": [
+        {
+          "role": "context",
+          "sampleId": "conv-44",
+          "sessionId": "session_21",
+          "sourceDateTime": "4:18 pm on 4 October, 2023",
+          "dialogueId": "D21:8",
+          "speaker": "Audrey",
+          "excerpt": "There are still some ways to appreciate it in the city, like getting some plants for your place or taking a trip to the park on the weekends."
+        },
+        {
+          "role": "support",
+          "sampleId": "conv-44",
+          "sessionId": "session_21",
+          "sourceDateTime": "4:18 pm on 4 October, 2023",
+          "dialogueId": "D21:9",
+          "speaker": "Andrew",
+          "excerpt": "I should get some more plants for my house. Can't beat being outside tho, but they can still bring some peace. I'll look into it."
+        }
+      ],
+      "representationHazards": [
+        "This is tentative acceptance, not a stable preference or completed purchase.",
+        "The alternative supplements rather than replaces Andrew's preference for being outdoors."
+      ]
+    },
+    {
+      "factId": "F08",
+      "label": "Low-intensity weekend plan",
+      "statement": "Andrew reported a plan to spend part of the coming weekend at a cozy cafe.",
+      "claimStatus": "speaker-reported",
+      "temporalScope": "one weekend plan reported on 13 October 2023",
+      "confidence": "high within the conversation",
+      "sourceRefs": [
+        {
+          "role": "support",
+          "sampleId": "conv-44",
+          "sessionId": "session_23",
+          "sourceDateTime": "4:22 pm on 13 October, 2023",
+          "dialogueId": "D23:3",
+          "speaker": "Andrew",
+          "excerpt": "This weekend, I'm planning to check out this cozy cafe and hang out there."
+        }
+      ],
+      "representationHazards": [
+        "Do not generalize a single plan into an enduring cafe preference.",
+        "Treat this plan as expired after its referenced weekend."
+      ]
+    },
+    {
+      "factId": "F09",
+      "label": "Sunday fixed commitment",
+      "statement": "At the source cutoff, Andrew reported that Sunday was already reserved for a picnic date with his girlfriend.",
+      "claimStatus": "speaker-reported",
+      "temporalScope": "future commitment stated on Saturday, 28 October 2023",
+      "confidence": "high within the conversation",
+      "sourceRefs": [
+        {
+          "role": "support",
+          "sampleId": "conv-44",
+          "sessionId": "session_26",
+          "sourceDateTime": "2:36 pm on 28 October, 2023",
+          "dialogueId": "D26:20",
+          "speaker": "Andrew",
+          "excerpt": "Does Saturday sound good? ... Because on Sunday I am going on a picnic date with my girlfriend."
+        }
+      ],
+      "representationHazards": [
+        "Preserve Sunday as occupied unless current workspace evidence explicitly updates or cancels it.",
+        "Do not infer the picnic's time, duration, or location."
+      ]
+    },
+    {
+      "factId": "F10",
+      "label": "Specific Saturday hike proposal",
+      "statement": "Despite the recent work-life constraints, Andrew proposed a Saturday hike, showing that constrained access did not eliminate his willingness to make a specific outdoor plan.",
+      "claimStatus": "speaker-reported with bounded interpretation",
+      "temporalScope": "specific proposal stated on 28 October 2023",
+      "confidence": "high for the proposal; medium for the bounded interpretation",
+      "sourceRefs": [
+        {
+          "role": "support",
+          "sampleId": "conv-44",
+          "sessionId": "session_26",
+          "sourceDateTime": "2:36 pm on 28 October, 2023",
+          "dialogueId": "D26:20",
+          "speaker": "Andrew",
+          "excerpt": "Does Saturday sound good? We can grab some snacks and have a blast exploring."
+        }
+      ],
+      "representationHazards": [
+        "Do not erase F03 and F06 merely because Andrew made one later plan.",
+        "Do not infer that every future Saturday is available for hiking."
+      ]
+    }
+  ],
+  "evidenceTensions": [
+    {
+      "tensionId": "T01",
+      "factIds": [
+        "F01",
+        "F02",
+        "F03",
+        "F06",
+        "F10"
+      ],
+      "description": "Andrew's enduring attraction to nature and occasional ambitious plans coexist with recent work-life constraints. A representation that says either 'Andrew always wants demanding outdoor activities' or 'Andrew no longer wants outdoor activities' would flatten the evidence."
+    },
+    {
+      "tensionId": "T02",
+      "factIds": [
+        "F04",
+        "F07",
+        "F08"
+      ],
+      "description": "Low-burden activities appear as helpful or acceptable alternatives, but the evidence does not establish a single stable preference among coffee, walking, plants, or cafes."
+    },
+    {
+      "tensionId": "T03",
+      "factIds": [
+        "F09",
+        "F10"
+      ],
+      "description": "The latest source turn distinguishes a proposed Saturday hike from an already occupied Sunday. A memory representation must not merge the two days."
+    }
+  ],
+  "requiredCoverage": {
+    "temporaryState": [
+      "F03"
+    ],
+    "isolatedBehaviorOrAspiration": [
+      "F02"
+    ],
+    "uncertainOrTentativePreference": [
+      "F07"
+    ],
+    "correctionOrFixedCommitment": [
+      "F09"
+    ],
+    "factDiscouragingSimplisticProfile": [
+      "F06",
+      "F10"
+    ],
+    "lowBurdenAlternative": [
+      "F04",
+      "F07",
+      "F08"
+    ]
+  },
+  "representationRules": [
+    "M1, M2, and M3 must draw only from F01-F10.",
+    "Every representation claim must cite its supporting fact IDs.",
+    "Omitted facts must be listed explicitly in the representation manifest.",
+    "Speaker-reported uncertainty, recency, and exceptions may not be silently upgraded.",
+    "No post-cutoff dialogue or annotation may be used, including for evaluation or manual repair.",
+    "Conflicts with current synthetic workspace evidence must be surfaced rather than silently resolved."
+  ]
+}

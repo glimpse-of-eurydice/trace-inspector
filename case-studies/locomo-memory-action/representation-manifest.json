@@ -1,0 +1,240 @@
+{
+  "schemaVersion": "0.1",
+  "caseStudyId": "locomo-conv44-memory-conditioned-scheduling",
+  "createdOn": "2026-07-30",
+  "status": "audited",
+  "sourceManifest": "case-studies/locomo-memory-action/source-manifest.json",
+  "evidenceLedger": "case-studies/locomo-memory-action/evidence-ledger.json",
+  "changedVariable": "memory_representation",
+  "heldContentBoundary": {
+    "allowedFactIds": [
+      "F01",
+      "F02",
+      "F03",
+      "F04",
+      "F05",
+      "F06",
+      "F07",
+      "F08",
+      "F09",
+      "F10"
+    ],
+    "sourceCutoffDialogueId": "D26:20",
+    "postCutoffEvidenceAllowed": false,
+    "currentTaskEvidenceAllowed": false
+  },
+  "lengthControl": {
+    "unit": "whitespace-delimited words",
+    "targetRange": {
+      "minimum": 260,
+      "maximum": 430
+    },
+    "rationale": "Keep conditions in a comparable range without forcing identical wording or deleting representation-specific metadata."
+  },
+  "conditions": [
+    {
+      "conditionId": "M1",
+      "label": "Timestamped witness trace",
+      "file": "case-studies/locomo-memory-action/representations/M1/memory.md",
+      "representationIntent": "Preserve chronological episodes, source dates, dialogue IDs, and speaker-reported wording with minimal cross-episode abstraction.",
+      "includedFactIds": [
+        "F01",
+        "F02",
+        "F03",
+        "F04",
+        "F05",
+        "F06",
+        "F07",
+        "F08",
+        "F09",
+        "F10"
+      ],
+      "omittedFactIds": [],
+      "transformations": [
+        {
+          "type": "chronological_selection",
+          "factIds": [
+            "F01",
+            "F02",
+            "F03",
+            "F04",
+            "F05",
+            "F06",
+            "F07",
+            "F08",
+            "F09",
+            "F10"
+          ],
+          "declaredLoss": "Most conversational wording and non-selected turns are omitted."
+        }
+      ],
+      "knownRisks": [
+        "Chronological detail may increase the salience of recency.",
+        "The agent must perform more temporal integration itself."
+      ],
+      "measuredWordCount": 323
+    },
+    {
+      "conditionId": "M2",
+      "label": "Stable user profile",
+      "file": "case-studies/locomo-memory-action/representations/M2/memory.md",
+      "representationIntent": "Compress episodes into directly consumable traits, recurring preferences, personal context, and scheduling guidance.",
+      "includedFactIds": [
+        "F01",
+        "F02",
+        "F03",
+        "F04",
+        "F05",
+        "F06",
+        "F07",
+        "F08",
+        "F09",
+        "F10"
+      ],
+      "omittedFactIds": [],
+      "transformations": [
+        {
+          "type": "trait_abstraction",
+          "factIds": [
+            "F01",
+            "F02"
+          ],
+          "declaredLoss": "The profile foregrounds stable preference language and reduces the distinction between repeated evidence and a one-episode aspiration."
+        },
+        {
+          "type": "cross_episode_compression",
+          "factIds": [
+            "F03",
+            "F04",
+            "F06",
+            "F07",
+            "F08"
+          ],
+          "declaredLoss": "Exact dates, expiration, and confidence differences are mostly removed from the agent-facing representation."
+        },
+        {
+          "type": "action_oriented_summary",
+          "factIds": [
+            "F04",
+            "F06",
+            "F07",
+            "F09",
+            "F10"
+          ],
+          "declaredLoss": "Evidence is reorganized as planning guidance rather than retained as separate episodes."
+        }
+      ],
+      "knownRisks": [
+        "A one-time aspiration may appear more trait-like than the source warrants.",
+        "Dated low-burden activities may appear to be stable preferences.",
+        "Action-oriented wording may reduce the likelihood that the agent verifies current applicability."
+      ],
+      "measuredWordCount": 262
+    },
+    {
+      "conditionId": "M3",
+      "label": "Temporal and uncertainty-aware profile",
+      "file": "case-studies/locomo-memory-action/representations/M3/memory.md",
+      "representationIntent": "Separate relatively stable evidence, historical aspirations, recent constraints, expired plans, temporary limitations, and fixed commitments.",
+      "includedFactIds": [
+        "F01",
+        "F02",
+        "F03",
+        "F04",
+        "F05",
+        "F06",
+        "F07",
+        "F08",
+        "F09",
+        "F10"
+      ],
+      "omittedFactIds": [],
+      "transformations": [
+        {
+          "type": "temporal_typing",
+          "factIds": [
+            "F02",
+            "F03",
+            "F05",
+            "F06",
+            "F08",
+            "F09",
+            "F10"
+          ],
+          "declaredLoss": "Episodes are categorized by inferred applicability rather than presented only in raw chronological order."
+        },
+        {
+          "type": "confidence_annotation",
+          "factIds": [
+            "F01",
+            "F02",
+            "F03",
+            "F05",
+            "F07",
+            "F09"
+          ],
+          "declaredLoss": "Qualitative confidence labels are researcher-authored metadata, not labels supplied by the speaker."
+        },
+        {
+          "type": "uncertainty_boundary",
+          "factIds": [
+            "F05",
+            "F08",
+            "F09"
+          ],
+          "declaredLoss": "The representation explicitly warns against carrying dated details forward, which may itself influence verification behavior."
+        }
+      ],
+      "knownRisks": [
+        "Uncertainty labels and boundary language may function as behavioral cues.",
+        "The representation requires researcher judgment about temporal applicability.",
+        "More explicit caveats may increase verification even when the raw evidence would not."
+      ],
+      "measuredWordCount": 362
+    }
+  ],
+  "manualAudit": {
+    "sourceSupport": {
+      "result": "pass",
+      "note": "Every agent-facing claim cites one or more frozen fact IDs."
+    },
+    "noLeakage": {
+      "result": "pass",
+      "note": "No post-D26:20 or current-task evidence is included."
+    },
+    "factCoverage": {
+      "result": "pass",
+      "note": "All three conditions include F01-F10; no omission is hidden."
+    },
+    "temporalFidelity": {
+      "M1": "pass",
+      "M2": "documented-transformation",
+      "M3": "pass",
+      "note": "M2 intentionally removes much exact temporal structure; the loss is declared in this researcher-facing manifest rather than treated as equivalent fidelity."
+    },
+    "uncertaintyFidelity": {
+      "M1": "pass",
+      "M2": "documented-transformation",
+      "M3": "pass",
+      "note": "M2 compresses uncertainty into profile language; M3 foregrounds it."
+    },
+    "fixedCommitmentFidelity": {
+      "result": "pass",
+      "note": "Every condition preserves the Sunday picnic separately from the Saturday hike proposal."
+    },
+    "speakerAttribution": {
+      "result": "pass",
+      "note": "Substantive claims concern Andrew; Audrey's turns appear only as context for F05 and F07."
+    },
+    "lengthControl": {
+      "result": "pass",
+      "measuredWordCounts": {
+        "M1": 323,
+        "M2": 262,
+        "M3": 362
+      },
+      "note": "All conditions fall within the predeclared 260-430 word range."
+    }
+  },
+  "claimBoundary": "These conditions are controlled researcher-authored representations of the same frozen evidence, not naturally occurring production memories. Their comparison can locate observable trajectory differences but cannot identify a hidden mechanism or estimate a general causal effect."
+}

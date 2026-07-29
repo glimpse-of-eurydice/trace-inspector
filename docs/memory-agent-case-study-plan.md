@@ -7,15 +7,16 @@ were met on 2026-07-29.
 
 **Timebox:** three focused working days after V2.
 
-**Positioning:** an exploratory engineering case study, not a completed Memory
-C3 benchmark and not a causal study of agent memory.
+**Positioning:** a public-source-grounded exploratory engineering case study,
+not a completed Memory C3 benchmark and not a causal study of agent memory.
 
 ## At a glance
 
 | Decision | Locked scope |
 |---|---|
 | Agent | One real Codex runtime |
-| Task | One synthetic local scheduling task |
+| Memory source | LoCoMo `conv-44`, focal speaker Andrew, through `D26:20` |
+| Task | One synthetic local scheduling environment grounded in the selected history |
 | Memory conditions | `M1` witness, `M2` stable profile, `M3` uncertainty-aware |
 | Repeats | Three per condition; nine real traces |
 | Main comparison | `M2-M1`, followed by `M3-M2` |
@@ -71,7 +72,7 @@ discipline:
 
 The case study deliberately removes:
 
-- LoCoMo and Multi-Session Chat ingestion;
+- full-corpus LoCoMo and Multi-Session Chat ingestion;
 - 20-case pilot and 60-case confirmatory samples;
 - automatic memory extraction;
 - population-level outcome rates;
@@ -116,9 +117,11 @@ The case study does **not** estimate a general memory effect.
 
 ### 5.1 Scenario
 
-Create a fully synthetic local workspace for a scheduling assistant. The user
-has asked the agent to inspect tomorrow's schedule and write a proposal that is
-less exhausting.
+Create a synthetic local workspace for a scheduling assistant. Its memory input
+is derived from the frozen LoCoMo evidence ledger, while the current calendar,
+task, and writable files remain synthetic and privacy-safe. The user has asked
+the agent to inspect tomorrow's schedule and write a proposal that is less
+exhausting.
 
 The shared task should be:
 
@@ -161,20 +164,17 @@ controlled environment for observing one tool-using turn.
 
 ## 6. Source history and representation conditions
 
-### 6.1 Frozen fact ledger
+### 6.1 Frozen source manifest and fact ledger
 
-Before writing any memory representation, create a small synthetic conversation
-history and a fact ledger such as:
+The public source and selected evidence are frozen before any memory
+representation is written:
 
-| Fact ID | Source turn | Supported statement |
-|---|---|---|
-| `F01` | `turn_03` | The user reported poor sleep during the current week. |
-| `F02` | `turn_07` | The user declined one 09:00 meeting last Tuesday. |
-| `F03` | `turn_11` | The user said they might reduce social activity this week. |
-| `F04` | `turn_15` | The user previously enjoyed morning walks. |
-| `F05` | `turn_18` | The user corrected an earlier statement: Thursday's appointment is fixed. |
+- `case-studies/locomo-memory-action/source-manifest.json`
+- `case-studies/locomo-memory-action/evidence-ledger.json`
 
-The exact facts may change during design lock, but they must include:
+The selected case is LoCoMo `conv-44`, with Andrew as the focal speaker and
+`D26:20` as the source cutoff. The ledger contains ten attributed facts and
+includes:
 
 - one temporary state;
 - one isolated behavior that could be overgeneralized;
@@ -199,7 +199,8 @@ All three files should:
 
 - stay inside a predeclared token range;
 - draw only from the same fact ledger;
-- include machine-readable source IDs in a companion manifest;
+- include machine-readable fact IDs in
+  `case-studies/locomo-memory-action/representation-manifest.json`;
 - contain no private or real personal information.
 
 ### 6.3 Manual representation audit
@@ -211,8 +212,8 @@ Audit the three representations before running the agent:
 | Source support | Every claim links to at least one fact ID |
 | No leakage | No current-task or post-cutoff information appears |
 | Fact coverage | Predeclared core facts are represented or omission is documented |
-| Temporal fidelity | Dates and temporary states are not silently made current |
-| Uncertainty fidelity | Uncertain evidence is not silently made certain |
+| Temporal fidelity | Dates and temporary states are preserved, or intentional loss is declared in the researcher-facing manifest |
+| Uncertainty fidelity | Uncertainty is preserved, or intentional compression is declared in the researcher-facing manifest |
 | Correction fidelity | The fixed/corrected commitment is preserved |
 
 This is a small manual audit, not a scored representation benchmark.
@@ -474,8 +475,6 @@ LLM-generated diagnostic for this case study.
 
 ```text
 fixtures/case-studies/memory-agent/
-├── source-history.jsonl
-├── fact-ledger.json
 ├── task.md
 ├── shared-workspace/
 ├── conditions/
@@ -486,6 +485,15 @@ fixtures/case-studies/memory-agent/
 │   └── M3/
 ├── case-manifest.json
 └── public-traces/
+
+case-studies/locomo-memory-action/
+├── source-manifest.json
+├── evidence-ledger.json
+├── representation-manifest.json
+└── representations/
+    ├── M1/memory.md
+    ├── M2/memory.md
+    └── M3/memory.md
 
 docs/case-studies/
 └── memory-conditioned-agent.md
@@ -516,7 +524,8 @@ the remaining gate is reviewing and committing the complete V2 change set.
 
 ### Day 1 — Freeze the case
 
-- write the synthetic history and fact ledger;
+- select and hash the public source, then freeze its source manifest and
+  evidence ledger;
 - write M1, M2, and M3 from the same ledger;
 - complete the manual representation audit;
 - freeze the task and initial workspace;
@@ -576,8 +585,8 @@ of whether the interface can represent sameness honestly.
 
 The case study is complete when:
 
-- [ ] one synthetic source history and fact ledger are frozen;
-- [ ] M1, M2, and M3 pass the manual representation audit;
+- [x] one public-source manifest and evidence ledger are frozen;
+- [x] M1, M2, and M3 pass the manual representation audit;
 - [ ] one tool-using task runs in isolated workspaces;
 - [ ] three real runs per condition are recorded;
 - [ ] every run preserves raw and normalized evidence;
@@ -597,10 +606,10 @@ The case study is complete when:
 After completion, a defensible CV bullet would be:
 
 > Designed a controlled memory-conditioned agent case study with three
-> evidence-linked representations and nine isolated Codex runs; extended a
-> local trace comparator to separate expected memory exposure from the first
-> downstream observable divergence in tool use, planning, and generated
-> artifacts.
+> evidence-linked representations grounded in a public long-conversation
+> dataset and nine isolated Codex runs; extended a local trace comparator to
+> separate expected memory exposure from the first downstream observable
+> divergence in tool use, planning, and generated artifacts.
 
 Shorter version:
 

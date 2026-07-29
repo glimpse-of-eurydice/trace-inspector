@@ -1,0 +1,86 @@
+{
+  "schemaVersion": "0.1",
+  "caseStudyId": "locomo-conv44-memory-conditioned-scheduling",
+  "createdOn": "2026-07-29",
+  "status": "source-locked",
+  "purpose": "Ground a controlled memory-representation intervention in a public long-term conversation while preserving turn-level provenance.",
+  "dataset": {
+    "name": "LoCoMo",
+    "paperTitle": "Evaluating Very Long-Term Conversational Memory of LLM Agents",
+    "repositoryUrl": "https://github.com/snap-research/locomo",
+    "sourceFileUrl": "https://github.com/snap-research/locomo/blob/main/data/locomo10.json",
+    "localSourcePath": "locomodata/locomo10.json",
+    "localSourceTrackedByGit": false,
+    "retrievedOn": "2026-07-29",
+    "sourceRevision": "unrecorded",
+    "contentSha256": "79fa87e90f04081343b8c8debecb80a9a6842b76a7aa537dc9fdf651ea698ff4",
+    "license": {
+      "name": "Creative Commons Attribution-NonCommercial 4.0 International",
+      "spdxLikeId": "CC-BY-NC-4.0",
+      "url": "https://creativecommons.org/licenses/by-nc/4.0/",
+      "projectLicenseUrl": "https://github.com/snap-research/locomo/blob/main/LICENSE.txt",
+      "useBoundary": "Research and portfolio case study; attribution required; no claim of commercial reuse rights."
+    },
+    "generationBoundary": "LoCoMo conversations were generated between LLM agents with assigned personas. They are public research artifacts, not verified records of real users."
+  },
+  "selection": {
+    "sampleId": "conv-44",
+    "focalSpeaker": "Andrew",
+    "conversationPartner": "Audrey",
+    "caseDomain": "Scheduling and low-burden activity planning under changing work-life constraints",
+    "includedSessionIds": [
+      "session_3",
+      "session_8",
+      "session_12",
+      "session_18",
+      "session_21",
+      "session_23",
+      "session_26"
+    ],
+    "selectedDialogueIds": [
+      "D3:1",
+      "D3:5",
+      "D8:1",
+      "D8:7",
+      "D12:3",
+      "D18:1",
+      "D18:5",
+      "D18:16",
+      "D18:17",
+      "D21:5",
+      "D21:7",
+      "D21:8",
+      "D21:9",
+      "D23:3",
+      "D26:20"
+    ],
+    "cutoff": {
+      "sessionId": "session_26",
+      "dialogueId": "D26:20",
+      "sourceDateTime": "2:36 pm on 28 October, 2023",
+      "rule": "Only the listed dialogue records at or before D26:20 may support a memory claim. Later turns and annotations may not be consulted while drafting M1, M2, or M3."
+    },
+    "selectionRationale": [
+      "The focal speaker remains the same across every substantive memory claim.",
+      "The history contains an enduring value, an isolated high-intensity aspiration, recent work stress, low-burden coping behavior, a temporary pet-related constraint, and a fixed Sunday commitment.",
+      "The evidence supports the existing local scheduling task without requiring a real calendar account.",
+      "The history contains tensions that a stable profile could flatten, making temporal and uncertainty-aware representation meaningful."
+    ],
+    "rejectedAlternative": {
+      "sampleId": "conv-47",
+      "reason": "The initially noticed preference shift belonged to John, while the strategy-game development intention belonged to James. Combining them as one user's memory would violate speaker attribution."
+    }
+  },
+  "claimBoundary": [
+    "The presence and text of a selected dataset record are observed at the dataset boundary.",
+    "Statements about Andrew's preferences, plans, or state are speaker-reported claims inside a generated conversation, not independently verified real-world facts.",
+    "A derived memory representation may summarize selected evidence but may not upgrade uncertainty, recurrence, duration, or current applicability without marking the inference.",
+    "The case study may describe observable runtime differences after memory exposure but may not identify a hidden model mechanism or claim a general causal memory effect."
+  ],
+  "dataHandling": {
+    "rawDatasetPolicy": "Keep the downloaded dataset under the gitignored locomodata/ directory.",
+    "committedDerivedDataPolicy": "Commit only the manifest, evidence ledger, bounded attributed excerpts, representations, synthetic workspace, and privacy-safe traces.",
+    "postCutoffPolicy": "Do not use post-cutoff dialogue or annotations to create, repair, or evaluate a representation.",
+    "attribution": "Cite the LoCoMo paper and repository in the case-study README and any public demo."
+  }
+}
