@@ -14,6 +14,7 @@ export interface SyntheticTraceDefinition {
   fixtureFile: string;
   fallbackStartedAt: string;
   fallbackEndedAt: string;
+  codexVersion?: string;
 }
 
 export interface PreparedDemoTrace {
@@ -43,7 +44,7 @@ export async function prepareSyntheticTrace(
     collectorVersion: "0.1.0",
     eventCount: rawRecords.length,
     containsSensitiveData: false,
-    codexVersion: "synthetic Codex fixture",
+    codexVersion: definition.codexVersion ?? "synthetic Codex fixture",
   });
 
   const replay = await replayTrace(definition.traceId);

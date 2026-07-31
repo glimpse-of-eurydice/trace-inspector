@@ -1,6 +1,6 @@
 import { createServer, type ServerResponse } from "node:http";
 import { readFile } from "node:fs/promises";
-import { resolve } from "node:path";
+import { join, resolve } from "node:path";
 import { readRawRecords, tracePaths } from "../store/trace-files.js";
 
 export interface TimelineServer {
@@ -48,6 +48,23 @@ function parseJsonLines(text: string): unknown[] {
     .map((line) => JSON.parse(line) as unknown);
 }
 
+async function readOptionalJson(file: string): Promise<unknown | null> {
+  try {
+    return JSON.parse(await readFile(file, "utf8")) as unknown;
+  } catch (error) {
+    const code =
+      typeof error === "object" && error !== null && "code" in error
+        ? error.code
+        : undefined;
+
+    if (code === "ENOENT") {
+      return null;
+    }
+
+    throw error;
+  }
+}
+
 export async function startTimelineServer(
   traceId: string,
   port = 4318,
@@ -73,12 +90,14 @@ export async function startTimelineServer(
           spansText,
           findingsText,
           rawRecords,
+          securityCase,
         ] = await Promise.all([
           readFile(paths.manifest, "utf8"),
           readFile(paths.events, "utf8"),
           readFile(paths.spans, "utf8"),
           readFile(paths.findings, "utf8"),
           readRawRecords(paths.raw),
+          readOptionalJson(join(paths.directory, "security-case.json")),
         ]);
 
         sendJson(response, 200, {
@@ -87,6 +106,7 @@ export async function startTimelineServer(
           spans: parseJsonLines(spansText),
           findings: parseJsonLines(findingsText),
           rawRecords,
+          securityCase,
         });
         return;
       }

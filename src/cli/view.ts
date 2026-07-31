@@ -7,6 +7,10 @@ import {
   DEMO_TRACE_ID,
   prepareDemoTrace,
 } from "../demo/prepare-demo-trace.js";
+import {
+  AGENT_HIJACK_DEMO_TRACE_ID,
+  prepareAgentHijackDemo,
+} from "../demo/prepare-agent-hijack-demo.js";
 
 async function latestTraceId(): Promise<string> {
   const entries = await readdir(".trace-inspector/traces", {
@@ -30,6 +34,11 @@ async function resolveTraceId(argument: string | undefined): Promise<string> {
   if (argument === "demo") {
     await prepareDemoTrace();
     return DEMO_TRACE_ID;
+  }
+
+  if (argument === "agent-hijack-demo") {
+    await prepareAgentHijackDemo();
+    return AGENT_HIJACK_DEMO_TRACE_ID;
   }
 
   const traceId =

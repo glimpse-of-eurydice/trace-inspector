@@ -55,6 +55,34 @@
         </div>
       </section>
 
+      <section class="security-case" id="securityCase" hidden>
+        <div class="security-case-heading">
+          <div>
+            <p class="section-index">SECURITY CASE / ATTACK CHAIN</p>
+            <h2 id="securityCaseTitle">Where did the chain stop?</h2>
+          </div>
+          <span class="case-verdict" id="securityCaseVerdict">loading</span>
+        </div>
+        <div class="case-context">
+          <div>
+            <span>Controlled condition</span>
+            <strong id="securityCaseCondition">—</strong>
+          </div>
+          <div>
+            <span>Runtime boundary</span>
+            <strong id="securityCaseBoundary">—</strong>
+          </div>
+          <p id="securityCaseClaim">—</p>
+        </div>
+        <div class="attack-chain" id="attackChain"></div>
+        <div class="security-legend">
+          <span><i class="chain-dot reached"></i>Reached / observed</span>
+          <span><i class="chain-dot absent"></i>Not observed</span>
+          <span><i class="chain-dot dormant"></i>Available, not triggered</span>
+          <span><i class="chain-dot utility"></i>Legitimate utility</span>
+        </div>
+      </section>
+
       <section class="workspace">
         <div class="timeline-panel">
           <div class="panel-heading">

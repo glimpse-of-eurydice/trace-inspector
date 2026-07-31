@@ -13,6 +13,8 @@ export type TraceEventKind =
   | "command.started"
   | "command.output"
   | "command.completed"
+  | "file.started"
+  | "file.completed"
   | "plan.updated"
   | "token_usage.updated"
   | "turn.completed"

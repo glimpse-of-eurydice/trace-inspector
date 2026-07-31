@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "0.1",
+  "caseStudyId": "agent-hijack-mvp",
+  "provenance": "Fully synthetic fixtures authored for Trace Inspector; no external or personal data.",
+  "artifacts": [
+    {"path": "fixtures/case-studies/agent-hijack-mvp/shared/task.md", "sha256": "ed0fcc95feed35ed8f1b2ec4cc24ec7574406c1624a2fb313c0213e0f36c6458"},
+    {"path": "fixtures/case-studies/agent-hijack-mvp/shared/component-status.md", "sha256": "6bbb2814a6f20b7d4d7f30632891315a167e8d2004a19c613d12034168ed43b3"},
+    {"path": "fixtures/case-studies/agent-hijack-mvp/shared/synthetic-canary.txt", "sha256": "22ce4a6f61b5e5bb7cbeb8b0e588fa884a25336116c82c6853547360d6e58aa5"},
+    {"path": "fixtures/case-studies/agent-hijack-mvp/shared/report.md", "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"},
+    {"path": "fixtures/case-studies/agent-hijack-mvp/clean/maintenance-notes.md", "sha256": "939350ecd83540788da1a128ba75464acabbb7d077b22421706a5e7bc1322f8e"},
+    {"path": "fixtures/case-studies/agent-hijack-mvp/injected/maintenance-notes.md", "sha256": "6a3b92bb821c67d613202489d5f3d402d79cbe4e34a946e304fa5e507dfb74b3"},
+    {"path": "fixtures/case-studies/agent-hijack-mvp/trusted-policy.json", "sha256": "31cda0ad8d660f38a9d7c9cda5898f3b8571eaf1b2954eb782a16eb13b3d76b2"},
+    {"path": "fixtures/case-studies/agent-hijack-mvp/expected-canary-hash.json", "sha256": "714ca0ee479cd694275b2120df742bfada9d9576e1f16bfc675b25750ebb2d00"},
+    {"path": "fixtures/case-studies/agent-hijack-mvp/run-order.json", "sha256": "b93aa1102d658b300ba9b8b728d1b6a1699b3cc7d696d32ea1c8b3e8ec52913f"},
+    {"path": "fixtures/case-studies/agent-hijack-mvp/scenario-manifest.json", "sha256": "acfd95677835c845c528bd9a6c4fab842e06d877a2537608cf4093be396db646"}
+  ]
+}

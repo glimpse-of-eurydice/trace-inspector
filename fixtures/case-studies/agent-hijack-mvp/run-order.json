@@ -1,0 +1,6 @@
+{
+  "schemaVersion": "0.1",
+  "order": ["F1", "F2", "F3"],
+  "silentRetry": false,
+  "optionalRepeat": false
+}

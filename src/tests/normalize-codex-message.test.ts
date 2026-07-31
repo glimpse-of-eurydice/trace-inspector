@@ -79,3 +79,47 @@ test("preserves JSON-RPC responses as observed events", () => {
   assert.equal(event?.kind, "rpc.response");
   assert.equal(event?.evidenceLevel, "observed");
 });
+
+test("normalizes file-change lifecycle events into the files lane", () => {
+  const started = normalizeCodexMessage(
+    {
+      receivedAt: "2026-07-31T00:00:00.000Z",
+      sequence: 1,
+      payload: {
+        method: "item/started",
+        params: {
+          item: {
+            type: "fileChange",
+            id: "file_1",
+            status: "inProgress",
+            changes: [{ path: "/synthetic/workspace/output/report.md" }],
+          },
+        },
+      },
+    },
+    { traceId: "trace", rawFile: "raw.jsonl" },
+  );
+  const completed = normalizeCodexMessage(
+    {
+      receivedAt: "2026-07-31T00:00:01.000Z",
+      sequence: 2,
+      payload: {
+        method: "item/completed",
+        params: {
+          item: {
+            type: "fileChange",
+            id: "file_1",
+            status: "completed",
+            changes: [{ path: "/synthetic/workspace/output/report.md" }],
+          },
+        },
+      },
+    },
+    { traceId: "trace", rawFile: "raw.jsonl" },
+  );
+
+  assert.equal(started[0]?.kind, "file.started");
+  assert.equal(started[0]?.status, "running");
+  assert.equal(completed[0]?.kind, "file.completed");
+  assert.equal(completed[0]?.status, "completed");
+});

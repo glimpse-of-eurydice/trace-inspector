@@ -19,6 +19,27 @@ interface TracePayload {
   spans: TraceSpan[];
   findings: DiagnosticFinding[];
   rawRecords: RawTraceRecord[];
+  securityCase: SecurityCasePayload | null;
+}
+
+interface SecurityCaseStage {
+  id: string;
+  label: string;
+  state: "reached" | "absent" | "dormant" | "utility";
+  evidenceLevel: "observed" | "model_reported" | "inferred";
+  detail: string;
+  evidenceEventIds: string[];
+}
+
+interface SecurityCasePayload {
+  caseStudyId: string;
+  runId: string;
+  title: string;
+  verdict: string;
+  condition: string;
+  runtimeBoundary: string;
+  claimBoundary: string;
+  stages: SecurityCaseStage[];
 }
 
 type LaneId =
@@ -361,7 +382,14 @@ function jumpToEvidence(
   finding: DiagnosticFinding,
   preferredEventId?: string,
 ): void {
-  const cards = finding.evidenceEventIds
+  jumpToEventIds(finding.evidenceEventIds, preferredEventId);
+}
+
+function jumpToEventIds(
+  eventIds: string[],
+  preferredEventId?: string,
+): void {
+  const cards = eventIds
     .map((eventId) => eventCardFor(eventId))
     .filter((card): card is HTMLButtonElement => card !== undefined);
   const preferredCard =
@@ -378,6 +406,72 @@ function jumpToEvidence(
   cards.forEach((card) => card.classList.add("evidence-linked"));
   targetCard.scrollIntoView({ behavior: "smooth", block: "center" });
   targetCard.focus({ preventScroll: true });
+}
+
+function renderSecurityCase(payload: TracePayload): void {
+  const securityCase = payload.securityCase;
+
+  if (securityCase === null) {
+    return;
+  }
+
+  const section = requireElement("securityCase");
+  section.hidden = false;
+  setText("securityCaseTitle", securityCase.title);
+  setText("securityCaseVerdict", securityCase.verdict);
+  setText("securityCaseCondition", securityCase.condition);
+  setText("securityCaseBoundary", securityCase.runtimeBoundary);
+  setText("securityCaseClaim", securityCase.claimBoundary);
+
+  const chain = requireElement("attackChain");
+  chain.replaceChildren();
+
+  for (const [index, stage] of securityCase.stages.entries()) {
+    if (index > 0) {
+      const connector = document.createElement("span");
+      connector.className = "chain-connector";
+      connector.textContent = "→";
+      connector.setAttribute("aria-hidden", "true");
+      chain.append(connector);
+    }
+
+    const card = document.createElement(
+      stage.evidenceEventIds.length > 0 ? "button" : "article",
+    );
+    card.className = `chain-stage chain-${stage.state}`;
+
+    if (card instanceof HTMLButtonElement) {
+      card.type = "button";
+      card.addEventListener("click", () =>
+        jumpToEventIds(stage.evidenceEventIds),
+      );
+      card.title = "Open supporting runtime evidence";
+    }
+
+    const indexLabel = document.createElement("span");
+    indexLabel.className = "chain-index";
+    indexLabel.textContent = String(index + 1).padStart(2, "0");
+
+    const state = document.createElement("span");
+    state.className = "chain-state";
+    state.textContent = stage.state.replace("_", " ");
+
+    const label = document.createElement("strong");
+    label.textContent = stage.label;
+
+    const detail = document.createElement("small");
+    detail.textContent = stage.detail;
+
+    const evidence = document.createElement("span");
+    evidence.className = `chain-evidence evidence-${stage.evidenceLevel}`;
+    evidence.textContent =
+      stage.evidenceEventIds.length > 0
+        ? `${stage.evidenceLevel.replace("_", " ")} · open evidence ↓`
+        : stage.evidenceLevel.replace("_", " ");
+
+    card.append(indexLabel, state, label, detail, evidence);
+    chain.append(card);
+  }
 }
 
 function evidenceStepLabel(event: TraceEvent): string {
@@ -501,6 +595,7 @@ async function main(): Promise<void> {
   renderSummary(payload);
   renderTimeline(payload);
   renderFindings(payload);
+  renderSecurityCase(payload);
   requireElement("loadingState").hidden = true;
 
   requireElement<HTMLInputElement>("showUnmapped").addEventListener(

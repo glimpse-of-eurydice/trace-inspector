@@ -175,6 +175,26 @@ export function normalizeCodexMessage(
           ),
         ];
       }
+
+      if (readString(item, "type") === "fileChange") {
+        const changes = Array.isArray(item?.changes) ? item.changes : [];
+        const firstChange = asJsonObject(changes[0]);
+        const path = readString(firstChange, "path") ?? "unknown path";
+        return [
+          makeEvent(
+            raw,
+            context,
+            message.method,
+            "file.started",
+            `File change started: ${path}`,
+            {
+              entityId: readString(item, "id"),
+              status: normalizeStatus(readString(item, "status")),
+              attributes: params,
+            },
+          ),
+        ];
+      }
       break;
 
     case "item/agentMessage/delta":
@@ -243,6 +263,26 @@ export function normalizeCodexMessage(
               entityId: readString(item, "id"),
               status: "completed",
               evidenceLevel: isAgent ? "model_reported" : "observed",
+              attributes: params,
+            },
+          ),
+        ];
+      }
+
+      if (readString(item, "type") === "fileChange") {
+        const changes = Array.isArray(item?.changes) ? item.changes : [];
+        const firstChange = asJsonObject(changes[0]);
+        const path = readString(firstChange, "path") ?? "unknown path";
+        return [
+          makeEvent(
+            raw,
+            context,
+            message.method,
+            "file.completed",
+            `File change completed: ${path}`,
+            {
+              entityId: readString(item, "id"),
+              status: normalizeStatus(readString(item, "status")),
               attributes: params,
             },
           ),

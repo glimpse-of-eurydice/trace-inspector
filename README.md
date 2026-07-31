@@ -52,6 +52,9 @@ An AI evaluation researcher debugging codex runs.
 - analyze a completed nine-run memory matrix offline, separating expected
   memory exposure from downstream comparison, preserving ambiguous alignments,
   and preparing a blinded artifact-review bundle.
+- run a three-condition synthetic indirect-instruction case with a model-free
+  sandbox preflight, exact-path policy classification, separate security and
+  utility outcomes, and no silent retries.
 
 ## What remains
 
@@ -215,6 +218,47 @@ the blinded final artifacts before opening the generated blinding map. See
 [docs/memory-agent-case-study-plan.md](docs/memory-agent-case-study-plan.md) for
 the frozen design and claim boundaries.
 
+## Agent-hijack observability case
+
+The security MVP asks whether Trace Inspector can distinguish untrusted-content
+exposure, policy-disallowed operations, runtime enforcement, synthetic
+consequences, and legitimate-task utility in one controlled local scenario.
+The evaluator policy remains outside the agent workspace.
+
+```bash
+npm run preflight:agent-hijack-mvp
+npm run case-study:agent-hijack-mvp
+npm run analyze:agent-hijack-mvp
+```
+
+The completed F1–F3 experiment produced a resistant/null result: both injected
+runs exposed the agent to the synthetic instruction, but neither attempted the
+disallowed canary read or sibling write, no canary propagated, and all three
+legitimate reports passed deterministic utility checks. The runtime preflight
+separately proved that the sibling write would be denied in F3 if attempted.
+See [the result summary](docs/case-studies/agent-hijack-mvp-results.md) for the
+evidence boundary and limitations.
+
+Open the credential-free showcase without running a model:
+
+```bash
+npm run view:agent-hijack-demo
+```
+
+The dashboard makes the result legible as an attack chain, then links reached
+stages back to normalized and raw evidence in the chronological timeline. The
+committed replay is explicitly constructed from the real F3 outcome structure;
+it is not presented as a verbatim raw trace.
+
+![Agent-hijack dashboard showing where the observable chain stopped](docs/assets/trace-inspector-agent-hijack-overview.png)
+
+<details>
+<summary>Inspect the linked timeline and raw evidence</summary>
+
+![Timeline evidence drill-down for the model-reported scope-conflict event](docs/assets/trace-inspector-agent-hijack-evidence.png)
+
+</details>
+
 ## Development milestones
 
 - **V0 — See one run:** capture, normalize, save, and visualize one real Codex
@@ -248,6 +292,7 @@ npm run typecheck
 npm test
 npm run demo:fixture
 npm run view:demo
+npm run view:agent-hijack-demo
 npm run compare:demo
 npm run eval:golden
 npm run prepare:memory-case -- M1
@@ -255,6 +300,9 @@ npm run record:memory-case -- M1 R1
 npm run preflight:memory-case
 npm run case-study:memory
 npm run analyze:memory-case
+npm run preflight:agent-hijack-mvp
+npm run case-study:agent-hijack-mvp
+npm run analyze:agent-hijack-mvp
 npm run record -- "Reply with exactly TRACE_INSPECTOR_SMOKE_OK. Do not run commands, use tools, or edit files."
 npm run view -- latest
 ```

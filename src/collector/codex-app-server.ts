@@ -2,6 +2,7 @@ import { spawn } from "node:child_process";
 import { randomUUID } from "node:crypto";
 import { once } from "node:events";
 import { createInterface } from "node:readline";
+import { resolve } from "node:path";
 import { asJsonObject } from "../adapters/codex/raw-codex-message.js";
 import {
   emptyCodexRuntimeMetadata,
@@ -21,6 +22,7 @@ export interface RecordCodexTurnOptions {
   timeoutMs?: number;
   sandboxMode?: "readOnly" | "workspaceWrite";
   networkAccess?: boolean;
+  additionalWritableRoots?: string[];
   model?: string;
   reasoningEffort?: string;
 }
@@ -41,6 +43,17 @@ function threadSandboxValue(
   return sandboxMode === "workspaceWrite"
     ? "workspace-write"
     : "read-only";
+}
+
+export function workspaceWritableRoots(
+  cwd: string,
+  additionalWritableRoots: string[] = [],
+): string[] {
+  return [
+    ...new Set(
+      [cwd, ...additionalWritableRoots].map((root) => resolve(root)),
+    ),
+  ];
 }
 
 function createTraceId(): string {
@@ -278,11 +291,16 @@ export async function recordCodexTurn(
         };
 
         if (sandboxMode === "workspaceWrite") {
+          const writableRoots = workspaceWritableRoots(
+            options.cwd,
+            options.additionalWritableRoots,
+          );
+
           turnStartParams.cwd = options.cwd;
           turnStartParams.approvalPolicy = "never";
           turnStartParams.sandboxPolicy = {
             type: "workspaceWrite",
-            writableRoots: [options.cwd],
+            writableRoots,
             networkAccess: options.networkAccess ?? false,
           };
         }

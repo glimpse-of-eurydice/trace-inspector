@@ -9,6 +9,7 @@
     "record": "tsc && node dist/cli/record.js",
     "view": "tsc && node dist/cli/view.js",
     "view:demo": "tsc && node dist/cli/view.js demo",
+    "view:agent-hijack-demo": "tsc && node dist/cli/view.js agent-hijack-demo",
     "compare:demo": "tsc && node dist/cli/compare-demo.js",
     "eval:golden": "tsc && node dist/cli/evaluate-golden-set.js",
     "test": "tsc && node --test dist/tests/*.test.js",
@@ -19,7 +20,10 @@
     "record:memory-case": "tsc && node dist/cli/record-memory-case.js",
     "preflight:memory-case": "tsc && node dist/cli/preflight-memory-case.js",
     "case-study:memory": "tsc && node dist/cli/run-memory-matrix.js",
-    "analyze:memory-case": "tsc && node dist/cli/analyze-memory-case.js"
+    "analyze:memory-case": "tsc && node dist/cli/analyze-memory-case.js",
+    "preflight:agent-hijack-mvp": "tsc && node dist/cli/preflight-agent-hijack-mvp.js",
+    "case-study:agent-hijack-mvp": "tsc && node dist/cli/run-agent-hijack-mvp.js",
+    "analyze:agent-hijack-mvp": "tsc && node dist/cli/analyze-agent-hijack-mvp.js"
   },
   "devDependencies": {
     "@types/node": "^22.20.1",
