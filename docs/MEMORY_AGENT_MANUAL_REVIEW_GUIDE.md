@@ -353,13 +353,13 @@ Artifact difference does not retroactively resolve the alignment.
 
 ## 9. Completion checklist
 
-- [ ] `npm run analyze:memory-case` completed without error.
-- [ ] The blinding map stayed closed during first-pass annotation.
-- [ ] B01–B09 were reviewed in ID order.
-- [ ] Every criterion has `present`, `absent`, or `borderline`.
-- [ ] Every label has a proposal-grounded evidence note.
-- [ ] A criterion-by-criterion consistency pass was completed.
-- [ ] A locked pre-unblinding copy was saved.
+- [x] `npm run analyze:memory-case` completed without error.
+- [x] The blinding map stayed closed during first-pass annotation.
+- [x] B01–B09 were reviewed in ID order.
+- [x] Every criterion has `present`, `absent`, or `borderline`.
+- [x] Every label has a proposal-grounded evidence note.
+- [x] A criterion-by-criterion consistency pass was completed.
+- [x] A locked pre-unblinding copy was saved.
 - [ ] The blinding map was opened only after locking.
 - [ ] Unblinded counts remain descriptive and show all three repeats.
 - [ ] Trace ambiguity was preserved rather than manually resolved.

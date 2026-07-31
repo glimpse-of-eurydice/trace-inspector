@@ -14,6 +14,7 @@ coverage/
 
 # Local Trace Inspector data
 .trace-inspector/
+/trace-inspector/
 
 # Local databases
 *.db
