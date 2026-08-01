@@ -448,6 +448,91 @@ button.chain-stage:focus-visible {
   accent-color: var(--accent);
 }
 
+.event-category-strip {
+  display: flex;
+  gap: 8px;
+  padding: 12px 16px;
+  overflow-x: auto;
+  border-bottom: 1px solid var(--line);
+  background: rgba(9, 11, 13, 0.58);
+  scrollbar-width: thin;
+}
+
+.event-category {
+  display: grid;
+  grid-template-columns: auto minmax(76px, 1fr);
+  align-items: center;
+  flex: 1 0 118px;
+  gap: 9px;
+  min-width: 0;
+  padding: 9px 11px;
+  color: var(--muted);
+  text-align: left;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--surface);
+  cursor: pointer;
+  transition:
+    border-color 140ms ease,
+    background 140ms ease,
+    transform 140ms ease;
+}
+
+.event-category:hover,
+.event-category:focus-visible {
+  color: var(--text);
+  border-color: var(--faint);
+  background: var(--surface-raised);
+  outline: none;
+  transform: translateY(-1px);
+}
+
+.event-category.selected {
+  color: var(--text);
+  border-color: var(--accent);
+  background: rgba(255, 204, 102, 0.06);
+  box-shadow: inset 0 -2px 0 rgba(255, 204, 102, 0.72);
+}
+
+.event-category strong {
+  color: var(--accent);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 18px;
+  font-weight: 540;
+}
+
+.event-category[data-lane="lifecycle"] strong { color: var(--cyan); }
+.event-category[data-lane="messages"] strong { color: var(--purple); }
+.event-category[data-lane="plan"] strong { color: var(--accent); }
+.event-category[data-lane="commands"] strong { color: var(--blue); }
+.event-category[data-lane="files"] strong { color: var(--green); }
+.event-category[data-lane="system"] strong { color: var(--muted); }
+
+.event-category span {
+  display: grid;
+  min-width: 0;
+  gap: 2px;
+}
+
+.event-category b,
+.event-category small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.event-category b {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 9px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.event-category small {
+  color: var(--faint);
+  font-size: 9px;
+}
+
 .findings-strip {
   display: grid;
   grid-template-columns: minmax(155px, 0.28fr) minmax(0, 1fr);

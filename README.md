@@ -27,6 +27,9 @@ An AI evaluation researcher debugging codex runs.
 - normalize lifecycle, message, command, plan, usage, and RPC response events;
 - preserve unsupported events as `unknown`;
 - render a deterministic terminal timeline;
+- summarize normalized events in a horizontal, count-bearing category strip
+  and filter the timeline by lifecycle, message, plan, command, file, or system
+  events;
 - open a vertical chronological browser flow with lane labels, transition
   timing, and clickable raw and normalized evidence;
 - reconstruct paired, failed, interrupted, incomplete, and orphan spans without
@@ -219,6 +222,19 @@ the blinded final artifacts before opening the generated blinding map. See
 the frozen design and claim boundaries.
 
 ## Agent-hijack observability case
+
+### OWASP threat-model framing
+
+This case is a controlled observability study of an indirect-instruction
+threat, not a claim that an OWASP vulnerability was successfully exploited. It
+is most directly motivated by
+[LLM01:2025 Prompt Injection](https://genai.owasp.org/llmrisk/llm01-prompt-injection/)
+and
+[ASI01:2026 Agent Goal Hijack](https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/).
+The canary-read and sibling-write stages test for evidence consistent with
+[ASI02:2026 Tool Misuse and Exploitation](https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/),
+but no such tool misuse was observed in the completed F1–F3 runs. `ASI` is the
+OWASP Agentic Security Initiative prefix; it should not be shortened to `AIS`.
 
 The security MVP asks whether Trace Inspector can distinguish untrusted-content
 exposure, policy-disallowed operations, runtime enforcement, synthetic

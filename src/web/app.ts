@@ -63,6 +63,9 @@ const laneDefinitions: Array<{
   { id: "system", label: "System", description: "usage · unmapped" },
 ];
 
+let selectedLane: LaneId | "all" = "all";
+let loadedPayload: TracePayload | undefined;
+
 function requireElement<T extends HTMLElement>(id: string): T {
   const element = document.getElementById(id);
 
@@ -240,13 +243,86 @@ function renderSummary(payload: TracePayload): void {
   status.className = `status-pill status-${payload.manifest.status}`;
 }
 
+function updateCategorySelection(): void {
+  document
+    .querySelectorAll<HTMLButtonElement>(".event-category")
+    .forEach((button) => {
+      const isSelected = button.dataset.lane === selectedLane;
+      button.classList.toggle("selected", isSelected);
+      button.setAttribute("aria-pressed", String(isSelected));
+    });
+}
+
+function renderEventCategories(payload: TracePayload): void {
+  const strip = requireElement("eventCategoryStrip");
+  const counts = new Map<LaneId, number>(
+    laneDefinitions.map((lane) => [lane.id, 0]),
+  );
+
+  for (const event of payload.events) {
+    const lane = laneFor(event.kind);
+    counts.set(lane, (counts.get(lane) ?? 0) + 1);
+  }
+
+  const categories: Array<{
+    id: LaneId | "all";
+    label: string;
+    description: string;
+    count: number;
+  }> = [
+    {
+      id: "all",
+      label: "All events",
+      description: "complete trajectory",
+      count: payload.events.length,
+    },
+    ...laneDefinitions.map((lane) => ({
+      ...lane,
+      count: counts.get(lane.id) ?? 0,
+    })),
+  ];
+
+  strip.replaceChildren();
+
+  for (const category of categories) {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "event-category";
+    button.dataset.lane = category.id;
+
+    const count = document.createElement("strong");
+    count.textContent = String(category.count);
+    const copy = document.createElement("span");
+    const label = document.createElement("b");
+    label.textContent = category.label;
+    const description = document.createElement("small");
+    description.textContent = category.description;
+    copy.append(label, description);
+    button.append(count, copy);
+    button.addEventListener("click", () => {
+      selectedLane = category.id;
+      updateCategorySelection();
+      renderTimeline(payload);
+    });
+    strip.append(button);
+  }
+
+  updateCategorySelection();
+}
+
 function renderTimeline(payload: TracePayload): void {
   const viewport = requireElement("timelineViewport");
   const showUnmapped =
     requireElement<HTMLInputElement>("showUnmapped").checked;
-  const events = showUnmapped
+  const visibilityFilteredEvents = showUnmapped
     ? payload.events
     : payload.events.filter((event) => event.kind !== "unknown");
+  const events =
+    selectedLane === "all"
+      ? visibilityFilteredEvents
+      : visibilityFilteredEvents.filter(
+          (event) => laneFor(event.kind) === selectedLane,
+        );
 
   viewport.replaceChildren();
 
@@ -399,6 +475,29 @@ function jumpToEventIds(
   const targetCard = preferredCard ?? cards[0];
 
   if (targetCard === undefined) {
+    if (loadedPayload === undefined) {
+      return;
+    }
+
+    const targetIncludesUnmapped = loadedPayload.events.some(
+      (event) => eventIds.includes(event.eventId) && event.kind === "unknown",
+    );
+    const showUnmapped = requireElement<HTMLInputElement>("showUnmapped");
+    const needsLaneReset = selectedLane !== "all";
+    const needsUnmappedReset = targetIncludesUnmapped && !showUnmapped.checked;
+
+    if (!needsLaneReset && !needsUnmappedReset) {
+      return;
+    }
+
+    if (needsUnmappedReset) {
+      showUnmapped.checked = true;
+    }
+
+    selectedLane = "all";
+    updateCategorySelection();
+    renderTimeline(loadedPayload);
+    jumpToEventIds(eventIds, preferredEventId);
     return;
   }
 
@@ -592,7 +691,9 @@ async function main(): Promise<void> {
   }
 
   const payload = (await response.json()) as TracePayload;
+  loadedPayload = payload;
   renderSummary(payload);
+  renderEventCategories(payload);
   renderTimeline(payload);
   renderFindings(payload);
   renderSecurityCase(payload);
