@@ -1,5 +1,5 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
-import { join } from "node:path";
+import { isAbsolute, join, relative, resolve, sep } from "node:path";
 import type {
   InterventionManifest,
   TraceDiff,
@@ -12,12 +12,28 @@ export interface ComparisonPaths {
 }
 
 export function comparisonPaths(comparisonId: string): ComparisonPaths {
-  const directory = join(".trace-inspector", "comparisons", comparisonId);
+  if (!/^[A-Za-z0-9][A-Za-z0-9_-]*$/.test(comparisonId)) {
+    throw new Error(
+      "comparisonId must be a non-empty slug containing only letters, numbers, underscores, and hyphens.",
+    );
+  }
+
+  const root = resolve(".trace-inspector", "comparisons");
+  const directory = resolve(root, comparisonId);
+  const relativeDirectory = relative(root, directory);
+  if (
+    isAbsolute(relativeDirectory) ||
+    (relativeDirectory !== "" && relativeDirectory.startsWith(`..${sep}`))
+  ) {
+    throw new Error("comparisonId resolves outside the comparisons directory.");
+  }
+
+  const storedDirectory = join(".trace-inspector", "comparisons", comparisonId);
 
   return {
-    directory,
-    diff: join(directory, "diff.json"),
-    intervention: join(directory, "intervention.json"),
+    directory: storedDirectory,
+    diff: join(storedDirectory, "diff.json"),
+    intervention: join(storedDirectory, "intervention.json"),
   };
 }
 

@@ -6,12 +6,14 @@ import type {
   TraceDiff,
 } from "../core/trace-comparison.js";
 import type { TraceEvent } from "../core/trace-event.js";
+import posixPath from "node:path/posix";
 
 type MaterialField =
   | "command"
   | "status"
   | "output"
   | "plan"
+  | "fileTargets"
   | "sourceEventType";
 
 interface EventMaterial {
@@ -20,6 +22,7 @@ interface EventMaterial {
   status?: string;
   output?: string;
   plan?: string;
+  fileTargets?: string;
   sourceEventType?: string;
 }
 
@@ -85,6 +88,54 @@ function normalizeText(
   return withoutWorkspace.trim().replaceAll(/\s+/g, " ");
 }
 
+function normalizePath(
+  value: string,
+  side: ComparisonSide,
+  policy: ComparisonPolicy,
+): string {
+  const normalized = posixPath.normalize(value);
+  const workspaceRoot =
+    side === "left"
+      ? policy.normalization.leftWorkspaceRoot
+      : policy.normalization.rightWorkspaceRoot;
+  if (workspaceRoot === undefined) {
+    return normalized;
+  }
+
+  const normalizedRoot = posixPath.normalize(workspaceRoot).replace(/\/$/, "");
+  if (
+    normalized === normalizedRoot ||
+    normalized.startsWith(`${normalizedRoot}/`)
+  ) {
+    return `${policy.normalization.workspacePlaceholder}${normalized.slice(normalizedRoot.length)}`;
+  }
+
+  return normalized;
+}
+
+function fileTargetsFor(
+  event: TraceEvent,
+  side: ComparisonSide,
+  policy: ComparisonPolicy,
+): string | undefined {
+  if (event.kind !== "file.started" && event.kind !== "file.completed") {
+    return undefined;
+  }
+
+  const item = asObject(event.attributes.item);
+  const changes = item?.changes;
+  if (!Array.isArray(changes)) {
+    return "[]";
+  }
+
+  const targets = changes.map((change) => {
+    const path = readString(asObject(change), "path");
+    return normalizePath(path ?? "<UNKNOWN_PATH>", side, policy);
+  });
+  targets.sort();
+  return stableJson(targets) ?? "[]";
+}
+
 function materialFor(
   event: TraceEvent,
   side: ComparisonSide,
@@ -100,6 +151,7 @@ function materialFor(
     event.kind === "plan.updated"
       ? normalizeText(stableJson(event.attributes.plan), side, policy)
       : undefined;
+  const fileTargets = fileTargetsFor(event, side, policy);
 
   return {
     kind: event.kind,
@@ -107,6 +159,7 @@ function materialFor(
     status: event.status,
     output,
     plan,
+    fileTargets,
     sourceEventType:
       event.kind === "unknown" ? event.sourceEventType : undefined,
   };
@@ -150,6 +203,11 @@ function compareMaterial(
       field: "sourceEventType",
       code: "source_event_type_changed",
       label: "Source event type",
+    },
+    {
+      field: "fileTargets",
+      code: "file_targets_changed",
+      label: "File targets",
     },
   ];
 
@@ -211,6 +269,7 @@ function createPolicy(
       "output",
       "plan",
       "source_event_type",
+      "file_targets",
     ],
     ignoredFields: [
       "event_id",

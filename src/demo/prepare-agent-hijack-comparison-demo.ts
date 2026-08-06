@@ -47,7 +47,10 @@ export async function prepareAgentHijackComparisonDemo(): Promise<PreparedAgentH
   const diff = compareTraces(
     left.replay.events,
     right.replay.events,
-    defaultComparisonPolicy(),
+    defaultComparisonPolicy({
+      leftWorkspaceRoot: "/synthetic/trace-inspector/F1/workspace",
+      rightWorkspaceRoot: "/synthetic/trace-inspector/F2/workspace",
+    }),
   );
   const paths = await createComparisonDirectory(AGENT_HIJACK_COMPARISON_ID);
   await writeTraceDiff(paths.diff, diff);

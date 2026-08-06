@@ -23,7 +23,13 @@ export interface ComparisonPolicy {
     optimalPathCountLimit: 2;
   };
   comparedFields: Array<
-    "kind" | "command" | "status" | "output" | "plan" | "source_event_type"
+    | "kind"
+    | "command"
+    | "status"
+    | "output"
+    | "plan"
+    | "source_event_type"
+    | "file_targets"
   >;
   ignoredFields: Array<
     "event_id" | "entity_id" | "absolute_time" | "raw_file" | "raw_sequence"
@@ -44,6 +50,7 @@ export interface DifferenceReason {
     | "output_changed"
     | "plan_changed"
     | "source_event_type_changed"
+    | "file_targets_changed"
     | "left_event_only"
     | "right_event_only";
   description: string;

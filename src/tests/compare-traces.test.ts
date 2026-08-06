@@ -6,6 +6,30 @@ import {
 } from "../analysis/compare-traces.js";
 import { prepareComparisonDemo } from "../demo/prepare-comparison-demo.js";
 import type { TraceEvent } from "../core/trace-event.js";
+import { comparisonPaths } from "../store/comparison-files.js";
+
+function fileEvent(traceId: string, path: string): TraceEvent {
+  return {
+    schemaVersion: "0.1",
+    eventId: `${traceId}:1`,
+    traceId,
+    sequence: 1,
+    source: "codex",
+    sourceEventType: "item/completed",
+    kind: "file.completed",
+    occurredAt: "2026-08-07T00:00:00.000Z",
+    status: "completed",
+    title: `File change completed: ${path}`,
+    evidenceLevel: "observed",
+    attributes: {
+      item: {
+        type: "fileChange",
+        changes: [{ path }],
+      },
+    },
+    rawRef: { file: "raw.jsonl", sequence: 1 },
+  };
+}
 
 test("locates the constructed output change as the first observable divergence", async () => {
   const demo = await prepareComparisonDemo();
@@ -97,6 +121,34 @@ test("normalizes configured workspace roots before comparing commands", async ()
   );
 
   assert.equal(diff.firstObservableDivergence, undefined);
+});
+
+test("compares normalized file targets instead of treating all file changes as equal", () => {
+  const left = fileEvent("left", "/workspace/output/report.md");
+  const right = fileEvent("right", "/workspace/etc/passwd");
+  const diff = compareTraces(
+    [left],
+    [right],
+    defaultComparisonPolicy({
+      leftWorkspaceRoot: "/workspace",
+      rightWorkspaceRoot: "/workspace",
+    }),
+  );
+
+  assert.equal(diff.alignedPairs[0]?.relation, "changed");
+  assert.deepEqual(
+    diff.alignedPairs[0]?.reasons.map((reason) => reason.code),
+    ["file_targets_changed"],
+  );
+});
+
+test("rejects comparison IDs that could escape the comparison directory", () => {
+  assert.throws(() => comparisonPaths("../../outside"), /comparisonId/i);
+  assert.throws(() => comparisonPaths("nested/name"), /comparisonId/i);
+  assert.equal(
+    comparisonPaths("agent-hijack-f1-vs-f2").directory,
+    ".trace-inspector/comparisons/agent-hijack-f1-vs-f2",
+  );
 });
 
 test("surfaces the variant-only plan update without losing later alignment", async () => {
