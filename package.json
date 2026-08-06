@@ -11,6 +11,7 @@
     "view:demo": "tsc && node dist/cli/view.js demo",
     "view:agent-hijack-demo": "tsc && node dist/cli/view.js agent-hijack-demo",
     "compare:demo": "tsc && node dist/cli/compare-demo.js",
+    "compare:agent-hijack-f1-f2": "tsc && node dist/cli/compare-agent-hijack-demo.js",
     "eval:golden": "tsc && node dist/cli/evaluate-golden-set.js",
     "test": "tsc && node --test dist/tests/*.test.js",
     "typecheck": "tsc --noEmit",

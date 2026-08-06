@@ -91,6 +91,10 @@ Timeline Viewer          Trace Comparator
 See [docs/architecture.md](docs/architecture.md) for the client and visibility
 boundary, and [docs/comparison-policy.md](docs/comparison-policy.md) for the
 exact V2 matching fields, costs, ambiguity rule, and golden-set coverage.
+For project-specific interview practice, use the Chinese
+[Trace Inspector interview Q&A](docs/TRACE_INSPECTOR_INTERVIEW_QA_ZH.md), which
+separates short spoken answers, follow-up depth, implementation evidence, and
+current limitations.
 
 ## Reproducible demo
 

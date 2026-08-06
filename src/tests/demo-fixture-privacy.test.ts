@@ -14,6 +14,11 @@ import {
   AGENT_HIJACK_DEMO_RAW,
   AGENT_HIJACK_DEMO_RESULT,
 } from "../demo/prepare-agent-hijack-demo.js";
+import {
+  AGENT_HIJACK_F1_FIXTURE,
+  AGENT_HIJACK_F2_FIXTURE,
+  AGENT_HIJACK_INTERVENTION,
+} from "../demo/prepare-agent-hijack-comparison-demo.js";
 
 test("the committed demo fixtures contain no known private local paths", async () => {
   const fixtures = await Promise.all(
@@ -24,6 +29,9 @@ test("the committed demo fixtures contain no known private local paths", async (
       COMPARISON_GOLDEN_SET_FILE,
       AGENT_HIJACK_DEMO_RAW,
       AGENT_HIJACK_DEMO_RESULT,
+      AGENT_HIJACK_F1_FIXTURE,
+      AGENT_HIJACK_F2_FIXTURE,
+      AGENT_HIJACK_INTERVENTION,
     ].map((file) => readFile(file, "utf8")),
   );
   const forbiddenPatterns = [
